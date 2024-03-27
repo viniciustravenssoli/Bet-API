@@ -40,6 +40,17 @@ public class UserRepository : IUserReadOnlyRepository, IUserUpdateOnlyRepository
 
     public void Update(User user)
     {
-        throw new NotImplementedException();
+        _context.Users.Update(user);
+    }
+
+    public async Task UpdateAsync(User user)
+    {
+        _context.Users.Update(user);
+    }
+
+    public async Task UpdateBalance(long userId, double newBalance)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        user.Balance = newBalance;
     }
 }

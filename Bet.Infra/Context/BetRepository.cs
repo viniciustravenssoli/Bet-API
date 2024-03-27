@@ -1,11 +1,19 @@
 ﻿using Bet.Domain.Repository.Bet;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bet.Infra.Context;
 public class BetRepository : IBetReadOnlyRepository, IBetUpdateOnlyRepository, IBetWriteOnlyRepository
 {
-    public Task Add(Domain.Entities.Bet bet)
+    private readonly BetContext _context;
+
+    public BetRepository(BetContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
+    }
+
+    public async Task Add(Domain.Entities.Bet bet)
+    {
+        await _context.Bets.AddAsync(bet);
     }
 
     public Task<IList<Domain.Entities.Bet>> GetAllFromUser(long userId)
@@ -13,13 +21,24 @@ public class BetRepository : IBetReadOnlyRepository, IBetUpdateOnlyRepository, I
         throw new NotImplementedException();
     }
 
-    public Task<Domain.Entities.Bet> GetById(long id)
+    public async Task<Domain.Entities.Bet> GetById(long id)
     {
-        throw new NotImplementedException();
+        return await _context.Bets.FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<List<Domain.Entities.Bet>> GetNotPaidBets()
+    {
+        var unpaidBets = await _context.Bets
+        .Include(b => b.UserBets)
+        .ThenInclude(ub => ub.User)
+        .Where(b => !b.Paid)
+        .ToListAsync();
+
+        return unpaidBets;
     }
 
     public void Update(Domain.Entities.Bet bet)
     {
-        throw new NotImplementedException();
+        _context.Bets.Update(bet);
     }
 }

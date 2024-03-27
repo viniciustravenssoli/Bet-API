@@ -11,6 +11,7 @@ public class BetContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Domain.Entities.Bet> Bets { get; set; }
+    public DbSet<UserBet> UserBets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
