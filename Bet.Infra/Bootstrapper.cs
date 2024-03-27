@@ -1,6 +1,7 @@
 ﻿using Bet.Domain.Extesions;
 using Bet.Domain.Repository.Bet;
 using Bet.Domain.Repository.User;
+using Bet.Domain.Repository.UserBet;
 using Bet.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -40,5 +41,6 @@ public static class Bootstrapper
         services.AddScoped<IBetReadOnlyRepository, BetRepository>();
         services.AddScoped<IBetUpdateOnlyRepository, BetRepository>();
         services.AddScoped<IBetWriteOnlyRepository, BetRepository>();
+        services.AddScoped<IUserBetWriteOnlyRepository, UserBetRepository>();
     }
 }
