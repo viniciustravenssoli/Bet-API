@@ -12,6 +12,22 @@ namespace Bet.Infra.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Bets",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Odd = table.Column<double>(type: "REAL", nullable: false),
+                    ExpiryTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Paid = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bets", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -19,6 +35,9 @@ namespace Bet.Infra.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Balance = table.Column<double>(type: "REAL", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    Password = table.Column<string>(type: "TEXT", nullable: false),
+                    Phone = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -27,23 +46,27 @@ namespace Bet.Infra.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bets",
+                name: "UserBets",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    BetAmount = table.Column<double>(type: "REAL", nullable: false),
-                    Odd = table.Column<double>(type: "REAL", nullable: false),
+                    BetId = table.Column<long>(type: "INTEGER", nullable: false),
                     UserId = table.Column<long>(type: "INTEGER", nullable: false),
-                    ExpiryTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Won = table.Column<bool>(type: "INTEGER", nullable: false),
+                    BetAmount = table.Column<double>(type: "REAL", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bets", x => x.Id);
+                    table.PrimaryKey("PK_UserBets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bets_Users_UserId",
+                        name: "FK_UserBets_Bets_BetId",
+                        column: x => x.BetId,
+                        principalTable: "Bets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserBets_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -51,14 +74,22 @@ namespace Bet.Infra.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bets_UserId",
-                table: "Bets",
+                name: "IX_UserBets_BetId",
+                table: "UserBets",
+                column: "BetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserBets_UserId",
+                table: "UserBets",
                 column: "UserId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "UserBets");
+
             migrationBuilder.DropTable(
                 name: "Bets");
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bet.Infra.Migrations
 {
     [DbContext(typeof(BetContext))]
-    [Migration("20240317193735_Initial")]
+    [Migration("20240321230842_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -26,9 +26,6 @@ namespace Bet.Infra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("BetAmount")
-                        .HasColumnType("REAL");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -38,15 +35,10 @@ namespace Bet.Infra.Migrations
                     b.Property<double>("Odd")
                         .HasColumnType("REAL");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Won")
+                    b.Property<bool>("Paid")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Bets");
                 });
@@ -63,7 +55,19 @@ namespace Bet.Infra.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -72,18 +76,60 @@ namespace Bet.Infra.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Bet.Domain.Entities.Bet", b =>
+            modelBuilder.Entity("Bet.Domain.Entities.UserBet", b =>
                 {
-                    b.HasOne("Bet.Domain.Entities.User", null)
-                        .WithMany("Bets")
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("BetAmount")
+                        .HasColumnType("REAL");
+
+                    b.Property<long>("BetId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserBets");
+                });
+
+            modelBuilder.Entity("Bet.Domain.Entities.UserBet", b =>
+                {
+                    b.HasOne("Bet.Domain.Entities.Bet", "Bet")
+                        .WithMany("UserBets")
+                        .HasForeignKey("BetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bet.Domain.Entities.User", "User")
+                        .WithMany("UserBets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Bet");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Bet.Domain.Entities.Bet", b =>
+                {
+                    b.Navigation("UserBets");
                 });
 
             modelBuilder.Entity("Bet.Domain.Entities.User", b =>
                 {
-                    b.Navigation("Bets");
+                    b.Navigation("UserBets");
                 });
 #pragma warning restore 612, 618
         }

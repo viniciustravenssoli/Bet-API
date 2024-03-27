@@ -3,6 +3,7 @@ using System;
 using Bet.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bet.Infra.Migrations
 {
     [DbContext(typeof(BetContext))]
-    partial class BetContextModelSnapshot : ModelSnapshot
+    [Migration("20240323200052_AddingProperties")]
+    partial class AddingProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -28,6 +31,9 @@ namespace Bet.Infra.Migrations
 
                     b.Property<DateTime>("ExpiryTime")
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Odd")
+                        .HasColumnType("REAL");
 
                     b.Property<bool>("Paid")
                         .HasColumnType("INTEGER");
@@ -74,10 +80,6 @@ namespace Bet.Infra.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -100,9 +102,6 @@ namespace Bet.Infra.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
-
-                    b.Property<double>("Odd")
-                        .HasColumnType("REAL");
 
                     b.Property<long>("UserId")
                         .HasColumnType("INTEGER");

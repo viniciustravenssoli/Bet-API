@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bet.Infra.Migrations
 {
     [DbContext(typeof(BetContext))]
-    [Migration("20240318175131_AddingNewProperties")]
-    partial class AddingNewProperties
+    [Migration("20240324194256_RemovinOddFromBetNowItIsInUserBets")]
+    partial class RemovinOddFromBetNowItIsInUserBets
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,27 +26,25 @@ namespace Bet.Infra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("BetAmount")
-                        .HasColumnType("REAL");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("ExpiryTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Odd")
-                        .HasColumnType("REAL");
-
-                    b.Property<long>("UserId")
+                    b.Property<bool>("Paid")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Won")
+                    b.Property<int>("TeamA")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TeamB")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Winner")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Bets");
                 });
@@ -84,18 +82,66 @@ namespace Bet.Infra.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Bet.Domain.Entities.Bet", b =>
+            modelBuilder.Entity("Bet.Domain.Entities.UserBet", b =>
                 {
-                    b.HasOne("Bet.Domain.Entities.User", null)
-                        .WithMany("Bets")
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("BetAmount")
+                        .HasColumnType("REAL");
+
+                    b.Property<long>("BetId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ChosenTeam")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Odd")
+                        .HasColumnType("REAL");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserBets");
+                });
+
+            modelBuilder.Entity("Bet.Domain.Entities.UserBet", b =>
+                {
+                    b.HasOne("Bet.Domain.Entities.Bet", "Bet")
+                        .WithMany("UserBets")
+                        .HasForeignKey("BetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bet.Domain.Entities.User", "User")
+                        .WithMany("UserBets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Bet");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Bet.Domain.Entities.Bet", b =>
+                {
+                    b.Navigation("UserBets");
                 });
 
             modelBuilder.Entity("Bet.Domain.Entities.User", b =>
                 {
-                    b.Navigation("Bets");
+                    b.Navigation("UserBets");
                 });
 #pragma warning restore 612, 618
         }
