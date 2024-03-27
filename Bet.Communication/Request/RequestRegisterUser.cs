@@ -1,4 +1,4 @@
-﻿namespace Bet.Communication.Response;
+﻿namespace Bet.Communication.Request;
 public class RequestRegisterUser
 {
     public string UserName { get; set; }
