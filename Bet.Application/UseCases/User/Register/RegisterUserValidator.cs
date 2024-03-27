@@ -1,4 +1,4 @@
-﻿using Bet.Communication.Response;
+﻿using Bet.Communication.Request;
 using FluentValidation;
 using System.Text.RegularExpressions;
 

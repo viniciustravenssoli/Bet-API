@@ -35,6 +35,7 @@ public class RegisterUserUseCase : IRegisterUserUseCase
             Email = request.Email,
             Password = request.Password,
             Phone = request.Phone,
+            Role = "BasicUser"
             
         };
 
@@ -43,7 +44,7 @@ public class RegisterUserUseCase : IRegisterUserUseCase
         await _usuarioRepository.Add(entity);
         await _unitOfWork.Commit();
 
-        var token = _tokenController.GenerateToken(entity.Email);
+        var token = _tokenController.GenerateToken(entity.Email, entity.Role);
 
         return new ResponseRegisterUser
         {

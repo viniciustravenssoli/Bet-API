@@ -33,7 +33,7 @@ public class LoginUseCase : ILoginUseCase
         return new ResponseLogin
         {
             Name = user.Name,
-            Token = _tokenController.GenerateToken(request.Email),
+            Token = _tokenController.GenerateToken(request.Email, user.Role),
         };
     }
 }
