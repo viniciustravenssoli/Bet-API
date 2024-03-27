@@ -8,7 +8,7 @@ namespace Bet.API.Controllers;
 
 public class UserController : BaseBetController
 {
-    [HttpPost]
+    [HttpPost("Register")]
     [ProducesResponseType(typeof(ResponseRegisterUser), StatusCodes.Status201Created)]
     public async Task<IActionResult> RegisterUsuario(
        [FromServices] IRegisterUserUseCase useCase,
