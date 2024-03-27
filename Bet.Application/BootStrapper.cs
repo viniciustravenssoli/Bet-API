@@ -1,6 +1,10 @@
 ﻿using Bet.Application.Services.Hash;
 using Bet.Application.Services.LoggedUser;
 using Bet.Application.Services.Token;
+using Bet.Application.UseCases.Bet.DefineWinner;
+using Bet.Application.UseCases.Bet.Pay;
+using Bet.Application.UseCases.Bet.Register;
+using Bet.Application.UseCases.User.JoinBet;
 using Bet.Application.UseCases.User.Login;
 using Bet.Application.UseCases.User.Register;
 using Microsoft.Extensions.Configuration;
@@ -39,5 +43,9 @@ public static class BootStrapper
     {
         services.AddScoped<IRegisterUserUseCase, RegisterUserUseCase>();
         services.AddScoped<ILoginUseCase, LoginUseCase>();
+        services.AddScoped<IRegisterBetUseCase, RegisterBetUseCase>();
+        services.AddScoped<IJoinBetUseCase, JoinBetUseCase>();
+        services.AddScoped<IDefineWinner, DefineWinner>();
+        services.AddScoped<IPayBetsUseCase, PayBestUseCase>();
     }
 }
