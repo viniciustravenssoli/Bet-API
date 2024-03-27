@@ -17,11 +17,12 @@ public class TokenController
         _tokenKey = tokenKey;
     }
 
-    public string GenerateToken(string userEmail)
+    public string GenerateToken(string userEmail, string role)
     {
         var claims = new List<Claim>
         {
-            new Claim(EmailAlias, userEmail)
+            new Claim(EmailAlias, userEmail),
+            new Claim(ClaimTypes.Role, role)
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
