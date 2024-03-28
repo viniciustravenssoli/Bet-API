@@ -1,6 +1,7 @@
 ﻿using Bet.Application.BaseExceptions;
 using Bet.Application.Services.Hash;
 using Bet.Application.Services.Token;
+using Bet.Application.UseCases.User.Register;
 using Bet.Communication.Request;
 using Bet.Communication.Response;
 using Bet.Domain.Repository.User;
@@ -21,6 +22,8 @@ public class LoginUseCase : ILoginUseCase
 
     public async Task<ResponseLogin> Execute(RequestLogin request)
     {
+        await Validate(request);
+
         var encryptedPassword = _passwordHasher.Hash(request.Password);
 
         var user = await _usuarioReadOnlyRepository.GetByEmailAndPassword(request.Email, encryptedPassword);
@@ -35,5 +38,16 @@ public class LoginUseCase : ILoginUseCase
             Name = user.Name,
             Token = _tokenController.GenerateToken(request.Email, user.Role),
         };
+    }
+    private async Task Validate(RequestLogin request)
+    {
+        var validator = new LoginUserValidator();
+        var result = validator.Validate(request);
+
+        if (!result.IsValid)
+        {
+            var errorsMessages = result.Errors.Select(e => e.ErrorMessage).ToList();
+            throw new ValidationErrorException(errorsMessages);
+        }
     }
 }
