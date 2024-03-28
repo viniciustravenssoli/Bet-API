@@ -17,7 +17,7 @@ Este projeto consiste em uma API web desenvolvida em C# utilizando o framework .
 - Entity Framework (EF): Utilizado para o gerenciamento de usuários e dados da aplicação.
 
 ## Implementações Futuras
-- [ x ] Implementar sistema de cadastro de usuários.
+- [x] Implementar sistema de cadastro de usuários.
 - [ x ] Desenvolver funcionalidade de gerenciamento de apostas.
 - [ x ] Utilizar Fluent Validation para validar requisições.
 - [ x ] Implementar controle de papéis de usuário (Admin vs. Normal).
