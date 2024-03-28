@@ -1,5 +1,6 @@
 ﻿using Bet.Application.BaseExceptions;
 using Bet.Application.Services.LoggedUser;
+using Bet.Application.UseCases.User.Login;
 using Bet.Communication.Request;
 using Bet.Communication.Response;
 using Bet.Domain.Entities;
@@ -8,74 +9,108 @@ using Bet.Domain.Repository.User;
 using Bet.Domain.Repository.UserBet;
 using Bet.Infra;
 
-namespace Bet.Application.UseCases.User.JoinBet;
-public class JoinBetUseCase : IJoinBetUseCase
+namespace Bet.Application.UseCases.User.JoinBet
 {
-    private readonly ILoggedUser _loggedUser;
-    private readonly IUserBetWriteOnlyRepository _userBetRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IBetReadOnlyRepository _betReadOnlyRepository;
-    private readonly IUserUpdateOnlyRepository _userUpdateOnlyRepository;
-
-    public JoinBetUseCase(ILoggedUser loggedUser, IUserBetWriteOnlyRepository userBetRepository, IUnitOfWork unitOfWork, IBetReadOnlyRepository betReadOnlyRepository, IUserUpdateOnlyRepository userUpdateOnlyRepository)
+    public class JoinBetUseCase : IJoinBetUseCase
     {
-        _loggedUser = loggedUser ?? throw new ArgumentNullException(nameof(loggedUser));
-        _userBetRepository = userBetRepository ?? throw new ArgumentNullException(nameof(userBetRepository));
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _betReadOnlyRepository = betReadOnlyRepository ?? throw new ArgumentNullException(nameof(betReadOnlyRepository));
-        _userUpdateOnlyRepository = userUpdateOnlyRepository ?? throw new ArgumentNullException(nameof(userUpdateOnlyRepository));
-    }
+        private readonly ILoggedUser _loggedUser;
+        private readonly IUserBetWriteOnlyRepository _userBetRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IBetReadOnlyRepository _betReadOnlyRepository;
+        private readonly IUserUpdateOnlyRepository _userUpdateOnlyRepository;
 
-    public async Task<ResponseJoinBet> Execute(RequestJoinBet request)
-    {
-        var user = await _loggedUser.GetUser() ?? throw new BetException("Usuário não encontrado");
-
-        if (request.BetAmount <= 0)
+        public JoinBetUseCase(
+            ILoggedUser loggedUser,
+            IUserBetWriteOnlyRepository userBetRepository,
+            IUnitOfWork unitOfWork,
+            IBetReadOnlyRepository betReadOnlyRepository,
+            IUserUpdateOnlyRepository userUpdateOnlyRepository)
         {
-            throw new BetException("O valor da aposta deve ser maior que zero.");
+            _loggedUser = loggedUser ?? throw new ArgumentNullException(nameof(loggedUser));
+            _userBetRepository = userBetRepository ?? throw new ArgumentNullException(nameof(userBetRepository));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _betReadOnlyRepository = betReadOnlyRepository ?? throw new ArgumentNullException(nameof(betReadOnlyRepository));
+            _userUpdateOnlyRepository = userUpdateOnlyRepository ?? throw new ArgumentNullException(nameof(userUpdateOnlyRepository));
         }
 
-        var bet = await _betReadOnlyRepository.GetById(request.BetId) ?? throw new BetException("Aposta não encontrada");
-
-        // Verifica se o usuário tem saldo suficiente
-        if (user.Balance < request.BetAmount)
+        public async Task<ResponseJoinBet> Execute(RequestJoinBet request)
         {
-            throw new BetException("Saldo insuficiente para realizar a aposta.");
+            
+            var user = await _loggedUser.GetUser() ?? throw new BetException("Usuário não encontrado");
+
+            var bet = await _betReadOnlyRepository.GetById(request.BetId) ?? throw new BetException("Aposta não encontrada");
+
+            await Validate(request, bet, user);
+
+            var userBets = await _userBetRepository.GetUserBetsByBetIdAsync(request.BetId);
+
+            var (totalAmount, amountOnTeamA, amountOnTeamB) = CalculateAmounts(userBets);
+
+            var userBet = CreateUserBet(user.Id, bet.Id, request.BetAmount, request.Chose, totalAmount, amountOnTeamA, amountOnTeamB);
+
+            user.Balance -= userBet.BetAmount;
+
+            await AddUserBetAndCommit(user, userBet);
+
+            var response = new ResponseJoinBet
+            {
+                Value = userBet.BetAmount,
+                PossibleReturn = userBet.BetAmount * userBet.Odd,
+                Chose = userBet.ChosenTeam
+            };
+
+            return response;
         }
 
-        var userBets = await _userBetRepository.GetUserBetsByBetIdAsync(request.BetId);
-
-        double totalAmount = userBets.Sum(ub => ub.BetAmount);
-        double amountOnTeamA = userBets.Where(ub => ub.ChosenTeam == Team.TeamA).Sum(ub => ub.BetAmount);
-        double amountOnTeamB = userBets.Where(ub => ub.ChosenTeam == Team.TeamB).Sum(ub => ub.BetAmount);
-
-        var userBet = new UserBet
+        private async Task Validate(RequestJoinBet request, Domain.Entities.Bet bet, Domain.Entities.User user)
         {
-            UserId = user.Id,
-            BetId = request.BetId,
-            BetAmount = request.BetAmount,
-            ChosenTeam = request.Chose,
-        };
+            var validator = new JoinBetValidator();
+            var result = validator.Validate(request);
 
-        userBet.CalculateOdd(totalAmount, amountOnTeamA, amountOnTeamB);
+            if (!result.IsValid)
+            {
+                var errorsMessages = result.Errors.Select(e => e.ErrorMessage).ToList();
+                throw new ValidationErrorException(errorsMessages);
+            }
 
-        // Atualiza o saldo do usuário
-        user.Balance -= userBet.BetAmount;
+            if (bet.Paid)
+            {
+                throw new ValidationErrorException(new List<string> { "Não é possivel entrar em apostas ja pagas." });
+            }
 
-        // Adiciona a aposta do usuário
-        await _userBetRepository.Add(userBet);
+            if (user.Balance < request.BetAmount)
+            {
+                throw new ValidationErrorException(new List<string> { "Saldo insuficiente para realizar a aposta." });
+            }
+        }
 
-        // Atualiza o saldo do usuário no repositório
-        await _userUpdateOnlyRepository.UpdateBalance(user.Id, user.Balance);
-
-        // Commit das alterações no banco de dados
-        await _unitOfWork.Commit();
-
-        var response = new ResponseJoinBet
+        private (double totalAmount, double amountOnTeamA, double amountOnTeamB) CalculateAmounts(IEnumerable<UserBet> userBets)
         {
-            Value = userBet.BetAmount
-        };
+            var totalAmount = userBets.Sum(ub => ub.BetAmount);
+            var amountOnTeamA = userBets.Where(ub => ub.ChosenTeam == Team.TeamA).Sum(ub => ub.BetAmount);
+            var amountOnTeamB = userBets.Where(ub => ub.ChosenTeam == Team.TeamB).Sum(ub => ub.BetAmount);
+            return (totalAmount, amountOnTeamA, amountOnTeamB);
+        }
 
-        return response;
+        private UserBet CreateUserBet(long userId, long betId, double betAmount, Team chosenTeam, double totalAmount, double amountOnTeamA, double amountOnTeamB)
+        {
+            var userBet = new UserBet
+            {
+                UserId = userId,
+                BetId = betId,
+                BetAmount = betAmount,
+                ChosenTeam = chosenTeam,
+            };
+
+            userBet.CalculateOdd(totalAmount, amountOnTeamA, amountOnTeamB);
+            return userBet;
+        }
+
+        private async Task AddUserBetAndCommit(Domain.Entities.User user, UserBet userBet)
+        {
+            await _userBetRepository.Add(userBet);
+            await _userUpdateOnlyRepository.UpdateBalance(user.Id, user.Balance);
+            await _unitOfWork.Commit();
+        }
     }
 }
