@@ -18,10 +18,10 @@ Este projeto consiste em uma API web desenvolvida em C# utilizando o framework .
 
 ## Implementações Futuras
 - [x] Implementar sistema de cadastro de usuários.
-- [ x ] Desenvolver funcionalidade de gerenciamento de apostas.
-- [ x ] Utilizar Fluent Validation para validar requisições.
-- [ x ] Implementar controle de papéis de usuário (Admin vs. Normal).
-- [ x ] Integrar cálculo de Odd para apostas.
+- [x] Desenvolver funcionalidade de gerenciamento de apostas.
+- [x] Utilizar Fluent Validation para validar requisições.
+- [x] Implementar controle de papéis de usuário (Admin vs. Normal).
+- [x] Integrar cálculo de Odd para apostas.
 - [ ] Notificar por e-mail quando uma aposta é ganha.
 
 ### Nota:
