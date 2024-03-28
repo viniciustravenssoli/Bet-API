@@ -1,3 +1,4 @@
+using Bet.API.Filters;
 using Bet.Application;
 using Bet.Infra;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,7 +13,7 @@ builder.Services.AddInfra(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
 
 builder.Services.AddHttpContextAccessor();
-//builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)));
+builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
