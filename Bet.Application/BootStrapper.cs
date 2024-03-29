@@ -2,6 +2,7 @@
 using Bet.Application.Services.LoggedUser;
 using Bet.Application.Services.Token;
 using Bet.Application.UseCases.Bet.DefineWinner;
+using Bet.Application.UseCases.Bet.GetAllFromUser;
 using Bet.Application.UseCases.Bet.Pay;
 using Bet.Application.UseCases.Bet.Register;
 using Bet.Application.UseCases.User.JoinBet;
@@ -47,5 +48,6 @@ public static class BootStrapper
         services.AddScoped<IJoinBetUseCase, JoinBetUseCase>();
         services.AddScoped<IDefineWinner, DefineWinner>();
         services.AddScoped<IPayBetsUseCase, PayBestUseCase>();
+        services.AddScoped<IGetAllFromUser, GetAllFromUser>();
     }
 }
