@@ -24,4 +24,13 @@ public class UserBetRepository : IUserBetWriteOnlyRepository
             .Where(ub => ub.BetId == betId)
             .ToListAsync();
     }
+    public async Task<List<UserBet>> GetUserBetsWithPaginationAsync(long userId, int page = 1, int pageSize = 10)
+    {
+        return await _context.UserBets
+            .Where(ub => ub.UserId == userId)
+            .OrderByDescending(ub => ub.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
 }
