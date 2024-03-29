@@ -12,10 +12,10 @@ public class UserBet : BaseEntity
     public void CalculateOdd(double totalAmount, double amountOnTeamA, double amountOnTeamB)
     {
         // Verifica se o totalAmount é zero para definir uma odd padrão
-        if (totalAmount == 0)
+        if (totalAmount == 0 || amountOnTeamA == 0 || amountOnTeamB == 0)
         {
-            // Define uma odd padrão, por exemplo, 2.0
-            Odd = 2.0;
+            // Definir odd padrão
+            Odd = 1.1; // Ou qualquer outro valor que você desejar
             return;
         }
 
