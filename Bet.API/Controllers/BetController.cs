@@ -1,4 +1,5 @@
 ﻿using Bet.Application.UseCases.Bet.DefineWinner;
+using Bet.Application.UseCases.Bet.GetAllFromUser;
 using Bet.Application.UseCases.Bet.Pay;
 using Bet.Application.UseCases.Bet.Register;
 using Bet.Application.UseCases.User.JoinBet;
@@ -57,5 +58,16 @@ public class BetController : BaseBetController
         await useCase.Execute();
 
         return Ok("Apostas Pagas");
+    }
+
+    [HttpGet("pegar-todas")]
+    [ProducesResponseType(typeof(ResponseGetAllBets), StatusCodes.Status201Created)]
+    public async Task<IActionResult> PegarApostas(
+      [FromServices] IGetAllFromUser useCase,
+      [FromQuery] PageQuery request)
+    {
+        var result = await useCase.Execute(request.Skip, request.Top);
+
+        return Ok(result);
     }
 }

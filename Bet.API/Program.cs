@@ -4,6 +4,7 @@ using Bet.Infra;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfra(builder.Configuration);
 builder.Services.AddApplication(builder.Configuration);
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)));
