@@ -1,4 +1,5 @@
-﻿using Bet.Application.Services.Hash;
+﻿using Bet.Application.Services.Email;
+using Bet.Application.Services.Hash;
 using Bet.Application.Services.LoggedUser;
 using Bet.Application.Services.Token;
 using Bet.Application.UseCases.Bet.DefineWinner;
@@ -10,6 +11,10 @@ using Bet.Application.UseCases.User.Login;
 using Bet.Application.UseCases.User.Register;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using System.Net.Mail;
+using System.Net;
+using EAC.Application.Email;
 
 namespace Bet.Application;
 public static class BootStrapper
@@ -17,6 +22,7 @@ public static class BootStrapper
     public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         AddJwtToken(services, configuration);
+        AddEmailService(services, configuration);
         AddOptionalPassworKey(services, configuration);
         AddUseCases(services);
         AddLoggedUser(services);
@@ -24,6 +30,23 @@ public static class BootStrapper
     private static void AddLoggedUser(IServiceCollection services)
     {
         services.AddScoped<ILoggedUser, LoggedUser>();
+    }
+
+    private static void AddEmailService(IServiceCollection services, IConfiguration configuration) 
+    {
+        services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+        services.AddSingleton<SmtpClient>(provider =>
+        {
+            var emailSettings = provider.GetRequiredService<IOptions<EmailSettings>>().Value;
+
+            return new SmtpClient(emailSettings.SmtpServer)
+            {
+                Port = emailSettings.SmtpPort,
+                Credentials = new NetworkCredential(emailSettings.Username, emailSettings.Password),
+                EnableSsl = true,
+            };
+        });
+        services.AddScoped<IEmailService, EmailService>();
     }
 
     private static void AddOptionalPassworKey(IServiceCollection services, IConfiguration configuration)
