@@ -22,7 +22,7 @@ Este projeto consiste em uma API web desenvolvida em C# utilizando o framework .
 - [x] Utilizar Fluent Validation para validar requisições.
 - [x] Implementar controle de papéis de usuário (Admin vs. Normal).
 - [x] Integrar cálculo de Odd para apostas.
-- [ ] Notificar por e-mail quando uma aposta é ganha.
+- [x] Notificar por e-mail quando uma aposta é ganha.
 
 ### Nota:
 A funcionalidade de notificação por e-mail quando uma aposta é ganha está planejada para ser implementada em uma versão futura do projeto.
