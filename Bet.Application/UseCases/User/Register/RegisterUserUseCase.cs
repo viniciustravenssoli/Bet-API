@@ -35,7 +35,8 @@ public class RegisterUserUseCase : IRegisterUserUseCase
             Email = request.Email,
             Password = request.Password,
             Phone = request.Phone,
-            Role = "BasicUser"
+            Role = "BasicUser",
+            Balance = 1000
             
         };
 
