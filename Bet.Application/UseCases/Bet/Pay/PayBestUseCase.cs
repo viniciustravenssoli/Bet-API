@@ -1,36 +1,39 @@
-﻿
+﻿using Bet.Application.Services.Email;
 using Bet.Domain.Repository.Bet;
 using Bet.Infra.Context;
+using System.Security.Cryptography;
 
 namespace Bet.Application.UseCases.Bet.Pay;
 public class PayBestUseCase : IPayBetsUseCase
 {
     private readonly IBetUpdateOnlyRepository _betUpdateOnlyRepository;
+    private readonly IEmailService _emailService;
     private readonly BetContext _betContext;
 
-    public PayBestUseCase(IBetUpdateOnlyRepository betUpdateOnlyRepository, BetContext betContext)
+    public PayBestUseCase(IBetUpdateOnlyRepository betUpdateOnlyRepository, BetContext betContext, IEmailService emailService)
     {
         _betUpdateOnlyRepository = betUpdateOnlyRepository;
         _betContext = betContext;
+        _emailService = emailService;
     }
 
     public async Task Execute()
     {
-        var unpaidBets = await _betUpdateOnlyRepository.GetNotPaidBets();
+        var unpaidBetsDictionary = await _betUpdateOnlyRepository.GetNotPaidBetsAsDictionary();
 
-        foreach (var bet in unpaidBets)
+        foreach (var bet in unpaidBetsDictionary.Values)
         {
-            foreach (var userBet in bet.UserBets)
+            await Task.WhenAll(bet.UserBets.Select(async userBet =>
             {
-                var user = userBet.User;
-                if (bet.Winner == userBet.ChosenTeam) // Implemente seu método para verificar se a aposta foi vencida
+                if (bet.Winner == userBet.ChosenTeam)
                 {
-                    // Pague ao usuário se a aposta foi vencida
-                    user.Balance += userBet.BetAmount * userBet.Odd;
+                    userBet.User.Balance += userBet.BetAmount * userBet.Odd;
+                    var earnerd = (userBet.BetAmount * userBet.Odd).ToString();
+                    await _emailService.ConfirmationBetWinner("corpo", earnerd, userBet.User.Email) ;
                 }
-                bet.Paid = true; // Marque a aposta como paga
-            }
-            
+            }));
+
+            bet.Paid = true;
         }
 
         await _betContext.SaveChangesAsync();
