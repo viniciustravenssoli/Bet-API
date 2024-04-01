@@ -4,13 +4,13 @@ using Bet.Infra.Context;
 using System.Security.Cryptography;
 
 namespace Bet.Application.UseCases.Bet.Pay;
-public class PayBestUseCase : IPayBetsUseCase
+public class PayBetsUseCase : IPayBetsUseCase
 {
     private readonly IBetUpdateOnlyRepository _betUpdateOnlyRepository;
     private readonly IEmailService _emailService;
     private readonly BetContext _betContext;
 
-    public PayBestUseCase(IBetUpdateOnlyRepository betUpdateOnlyRepository, BetContext betContext, IEmailService emailService)
+    public PayBetsUseCase(IBetUpdateOnlyRepository betUpdateOnlyRepository, BetContext betContext, IEmailService emailService)
     {
         _betUpdateOnlyRepository = betUpdateOnlyRepository;
         _betContext = betContext;

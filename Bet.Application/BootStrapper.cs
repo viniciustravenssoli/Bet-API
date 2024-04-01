@@ -70,7 +70,7 @@ public static class BootStrapper
         services.AddScoped<IRegisterBetUseCase, RegisterBetUseCase>();
         services.AddScoped<IJoinBetUseCase, JoinBetUseCase>();
         services.AddScoped<IDefineWinner, DefineWinner>();
-        services.AddScoped<IPayBetsUseCase, PayBestUseCase>();
+        services.AddScoped<IPayBetsUseCase, PayBetsUseCase>();
         services.AddScoped<IGetAllFromUser, GetAllFromUser>();
     }
 }
