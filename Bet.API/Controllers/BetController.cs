@@ -26,7 +26,7 @@ public class BetController : BaseBetController
     }
 
     [HttpPost("join")]
-    [ProducesResponseType(typeof(ResponseRegisterBet), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseJoinBet), StatusCodes.Status201Created)]
     public async Task<IActionResult> EntrarAposta(
       [FromServices] IJoinBetUseCase useCase,
       [FromBody] RequestJoinBet request)
@@ -38,10 +38,10 @@ public class BetController : BaseBetController
 
     [Authorize(Roles = "Admin")]
     [HttpPut("difine-winner/{id}")]
-    [ProducesResponseType(typeof(ResponseRegisterBet), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> DefinirGanhador(
       [FromServices] IDefineWinner useCase,
-      [FromBody] Team request,
+      [FromBody] RequestDefineWinner request,
       [FromRoute] long id)
     {
         await useCase.Execute(request, id);
@@ -51,7 +51,7 @@ public class BetController : BaseBetController
 
     [Authorize(Roles = "Admin")]
     [HttpPost("pay")]
-    [ProducesResponseType(typeof(ResponseRegisterBet), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> Pagar(
       [FromServices] IPayBetsUseCase useCase)
     {
@@ -61,7 +61,7 @@ public class BetController : BaseBetController
     }
 
     [HttpGet("pegar-todas")]
-    [ProducesResponseType(typeof(ResponseGetAllBets), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ResponseGetAllBets), StatusCodes.Status200OK)]
     public async Task<IActionResult> PegarApostas(
       [FromServices] IGetAllFromUser useCase,
       [FromQuery] PageQuery request)

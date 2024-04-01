@@ -1,7 +1,7 @@
-﻿using Bet.Domain.Entities;
+﻿using Bet.Communication.Request;
 
 namespace Bet.Application.UseCases.Bet.DefineWinner;
 public interface IDefineWinner
 {
-    Task Execute(Team winner, long id);
+    Task Execute(RequestDefineWinner request, long id);
 }

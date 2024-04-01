@@ -1,4 +1,4 @@
-﻿using Bet.Domain.Entities;
+﻿using Bet.Communication.Request;
 using Bet.Domain.Repository.Bet;
 using Bet.Infra;
 
@@ -14,11 +14,11 @@ public class DefineWinner : IDefineWinner
         _unitOfWork = unitOfWork;
     }
 
-    public async Task Execute(Team winner, long id)
+    public async Task Execute(RequestDefineWinner request, long id)
     {
         var bet = await _updateBetRepository.GetById(id);
 
-        bet.Winner = winner;
+        bet.Winner = request.Winner;
         _updateBetRepository.Update(bet);
 
         await _unitOfWork.Commit();
