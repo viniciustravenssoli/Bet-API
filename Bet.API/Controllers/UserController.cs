@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bet.API.Controllers;
 
+[Route("api/[controller]")]
+[ApiController]
 public class UserController : BaseBetController
 {
     [HttpPost("Register")]
