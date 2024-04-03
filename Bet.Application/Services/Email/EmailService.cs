@@ -24,7 +24,8 @@ namespace EAC.Application.Email
                 email.From.Add(MailboxAddress.Parse(_emailConfiguration.Username));
                 email.To.Add(MailboxAddress.Parse(emailto));
                 email.Subject = $"Parabens voce ganhou uma aposta e seu ganho foi de {earnedValue}";
-                email.Body = new TextPart(TextFormat.Html) { Text = body };
+                email.Body = new TextPart(TextFormat.Html) { Text = BuildWinnerEmailMessage(earnedValue) };
+
 
                 using var smtp = new SmtpClient();
                 await smtp.ConnectAsync(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, SecureSocketOptions.StartTls);
@@ -37,5 +38,16 @@ namespace EAC.Application.Email
                 throw ex;
             }
         }
+        private string BuildWinnerEmailMessage(string earnedValue)
+        {
+            return $@"<html>
+                        <body>
+                            <h1>Parabéns!</h1>
+                            <p>Você ganhou uma aposta e seu ganho foi de {earnedValue}.</p>
+                            <p>Obrigado por usar nosso serviço.</p>
+                        </body>
+                    </html>";
+        }
+
     }
 }
