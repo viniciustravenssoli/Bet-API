@@ -30,6 +30,18 @@ public class ExceptionFilter : IExceptionFilter
         {
             DealLoginException(context);
         }
+        else if (context.Exception is NotFoundException)
+        {
+            DealNotFoundException(context);
+        }
+    }
+
+    private void DealNotFoundException(ExceptionContext context)
+    {
+        var notFound = context.Exception as NotFoundException;
+
+        context.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+        context.Result = new ObjectResult(new ErrorResponse(notFound.Message));
     }
 
     private void DealValidationErrorsException(ExceptionContext context)

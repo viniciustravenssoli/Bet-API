@@ -36,9 +36,9 @@ namespace Bet.Application.UseCases.User.JoinBet
         public async Task<ResponseJoinBet> Execute(RequestJoinBet request)
         {
             
-            var user = await _loggedUser.GetUser() ?? throw new BetException("Usuário não encontrado");
+            var user = await _loggedUser.GetUser() ?? throw new NotFoundException("Usuario não encontrado");
 
-            var bet = await _betReadOnlyRepository.GetById(request.BetId) ?? throw new BetException("Aposta não encontrada");
+            var bet = await _betReadOnlyRepository.GetById(request.BetId) ?? throw new NotFoundException("Aposta não encontrada");
 
             await Validate(request, bet, user);
 

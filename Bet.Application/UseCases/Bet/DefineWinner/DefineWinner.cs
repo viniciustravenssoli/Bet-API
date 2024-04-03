@@ -18,9 +18,9 @@ public class DefineWinner : IDefineWinner
     public async Task Execute(RequestDefineWinner request, long id)
     {
         await Validate(request);
-        var bet = await _updateBetRepository.GetById(id);
+        var bet = await _updateBetRepository.GetById(id) ?? throw new NotFoundException("Aposta não encontrada"); 
 
-        if(bet.Winner is not null) 
+        if (bet.Winner is not null) 
         {
             throw new ValidationErrorException(new List<string> { "O ganhador dessa aposta ja foi definido e não é possivel altera-lo atraves desse recurso" });
         }
@@ -41,5 +41,6 @@ public class DefineWinner : IDefineWinner
             var errorsMessages = result.Errors.Select(e => e.ErrorMessage).ToList();
             throw new ValidationErrorException(errorsMessages);
         }
+
     }
 }
