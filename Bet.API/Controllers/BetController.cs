@@ -24,7 +24,10 @@ public class BetController : BaseBetController
         return Created(string.Empty, result);
     }
 
+    [Authorize]
     [HttpPost("join")]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseJoinBet), StatusCodes.Status201Created)]
     public async Task<IActionResult> EntrarAposta(
       [FromServices] IJoinBetUseCase useCase,
@@ -38,6 +41,7 @@ public class BetController : BaseBetController
     [Authorize(Roles = "Admin")]
     [HttpPut("difine-winner/{id}")]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> DefinirGanhador(
       [FromServices] IDefineWinner useCase,
@@ -51,7 +55,6 @@ public class BetController : BaseBetController
 
     [Authorize(Roles = "Admin")]
     [HttpPost("pay")]
-
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> Pagar(
@@ -62,7 +65,9 @@ public class BetController : BaseBetController
         return Ok("Apostas Pagas");
     }
 
+    [Authorize]
     [HttpGet("pegar-todas")]
+    [ProducesResponseType(typeof(ResponseGetAllBets), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ResponseGetAllBets), StatusCodes.Status200OK)]
     public async Task<IActionResult> PegarApostas(
       [FromServices] IGetAllFromUser useCase,
