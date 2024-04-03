@@ -5,7 +5,6 @@ using Bet.Application.UseCases.Bet.Register;
 using Bet.Application.UseCases.User.JoinBet;
 using Bet.Communication.Request;
 using Bet.Communication.Response;
-using Bet.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +37,7 @@ public class BetController : BaseBetController
 
     [Authorize(Roles = "Admin")]
     [HttpPut("difine-winner/{id}")]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> DefinirGanhador(
       [FromServices] IDefineWinner useCase,
@@ -51,6 +51,8 @@ public class BetController : BaseBetController
 
     [Authorize(Roles = "Admin")]
     [HttpPost("pay")]
+
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> Pagar(
       [FromServices] IPayBetsUseCase useCase)
