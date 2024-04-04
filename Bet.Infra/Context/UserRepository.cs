@@ -53,4 +53,11 @@ public class UserRepository : IUserReadOnlyRepository, IUserUpdateOnlyRepository
         var user = await _context.Users.FindAsync(userId);
         user.Balance = newBalance;
     }
+
+    public async Task BulkUpdateBalanceAsync(long userId, double earnedValue)
+    {
+        var user = await _context.Users.Where(x => x.Id == userId).
+                                        ExecuteUpdateAsync(s => s.SetProperty
+                                        (u => u.Balance,u => u.Balance + earnedValue));
+    }
 }

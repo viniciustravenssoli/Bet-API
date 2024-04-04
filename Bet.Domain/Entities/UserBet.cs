@@ -33,6 +33,6 @@ public class UserBet : BaseEntity
 
 public enum Team
 {
-    TeamA,
-    TeamB
+    TeamA = 0,
+    TeamB = 1
 }

@@ -1,20 +1,22 @@
 ﻿using Bet.Application.Services.Email;
 using Bet.Domain.Repository.Bet;
-using Bet.Infra.Context;
-using System.Security.Cryptography;
+using Bet.Domain.Repository.User;
+using Bet.Infra;
 
 namespace Bet.Application.UseCases.Bet.Pay;
 public class PayBetsUseCase : IPayBetsUseCase
 {
     private readonly IBetUpdateOnlyRepository _betUpdateOnlyRepository;
+    private readonly IUserUpdateOnlyRepository _userUpdateOnlyRepository;
     private readonly IEmailService _emailService;
-    private readonly BetContext _betContext;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public PayBetsUseCase(IBetUpdateOnlyRepository betUpdateOnlyRepository, BetContext betContext, IEmailService emailService)
+    public PayBetsUseCase(IBetUpdateOnlyRepository betUpdateOnlyRepository, IEmailService emailService, IUserUpdateOnlyRepository userUpdateOnlyRepository, IUnitOfWork unitOfWork)
     {
         _betUpdateOnlyRepository = betUpdateOnlyRepository;
-        _betContext = betContext;
         _emailService = emailService;
+        _userUpdateOnlyRepository = userUpdateOnlyRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task Execute()
@@ -27,15 +29,17 @@ public class PayBetsUseCase : IPayBetsUseCase
             {
                 if (bet.Winner == userBet.ChosenTeam)
                 {
-                    userBet.User.Balance += userBet.BetAmount * userBet.Odd;
+                    await _userUpdateOnlyRepository.BulkUpdateBalanceAsync(userBet.UserId, userBet.BetAmount * userBet.Odd);
                     var earnerd = (userBet.BetAmount * userBet.Odd).ToString();
-                    await _emailService.ConfirmationBetWinner("corpo", earnerd, userBet.User.Email) ;
+                    await _emailService.ConfirmationBetWinner("body", earnerd, userBet.User.Email) ;
                 }
             }));
 
             bet.Paid = true;
+            _betUpdateOnlyRepository.Update(bet);
+
         }
 
-        await _betContext.SaveChangesAsync();
+        await _unitOfWork.Commit();
     }
 }
