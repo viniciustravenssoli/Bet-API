@@ -27,7 +27,7 @@ public class BetController : BaseBetController
     [Authorize]
     [HttpPost("join")]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResponseJoinBet), StatusCodes.Status201Created)]
     public async Task<IActionResult> EntrarAposta(
       [FromServices] IJoinBetUseCase useCase,
@@ -40,8 +40,9 @@ public class BetController : BaseBetController
 
     [Authorize(Roles = "Admin")]
     [HttpPut("difine-winner/{id}")]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> DefinirGanhador(
       [FromServices] IDefineWinner useCase,
