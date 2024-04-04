@@ -67,7 +67,7 @@ public class BetController : BaseBetController
 
     [Authorize]
     [HttpGet("pegar-todas")]
-    [ProducesResponseType(typeof(ResponseGetAllBets), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ResponseGetAllBets), StatusCodes.Status200OK)]
     public async Task<IActionResult> PegarApostas(
       [FromServices] IGetAllFromUser useCase,
