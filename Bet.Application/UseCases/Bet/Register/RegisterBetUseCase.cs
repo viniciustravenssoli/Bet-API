@@ -23,8 +23,6 @@ public class RegisterBetUseCase : IRegisterBetUseCase
 
         var bet = new Domain.Entities.Bet
         {
-            TeamA = Domain.Entities.Team.TeamA,
-            TeamB = Domain.Entities.Team.TeamB,
             Winner = null,
             ExpiryTime = request.ExpiryTime,
             Paid = false,
