@@ -50,9 +50,9 @@ public class ExceptionFilter : IExceptionFilter
 
     private void DealConfilictException(ExceptionContext context)
     {
-        var notFound = context.Exception as NotFoundException;
+        var notFound = context.Exception as ConflictException;
 
-        context.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+        context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
         context.Result = new ObjectResult(new ErrorResponse(notFound.Message));
     }
 

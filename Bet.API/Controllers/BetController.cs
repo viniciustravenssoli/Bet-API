@@ -42,6 +42,7 @@ public class BetController : BaseBetController
     [HttpPut("difine-winner/{id}")]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
     public async Task<IActionResult> DefinirGanhador(
