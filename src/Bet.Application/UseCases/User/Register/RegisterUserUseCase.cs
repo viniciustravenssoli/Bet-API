@@ -62,7 +62,7 @@ public class RegisterUserUseCase : IRegisterUserUseCase
 
         if (userExists)
         {
-            result.Errors.Add(new FluentValidation.Results.ValidationFailure("email", "Email Already in Use"));
+            throw new ConflictException("Email em uso");
         }
 
         if (!result.IsValid)
