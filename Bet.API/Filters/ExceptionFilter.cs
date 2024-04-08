@@ -34,9 +34,21 @@ public class ExceptionFilter : IExceptionFilter
         {
             DealNotFoundException(context);
         }
+        else if(context.Exception is ConflictException) 
+        {
+            DealConfilictException(context);
+        }
     }
 
     private void DealNotFoundException(ExceptionContext context)
+    {
+        var notFound = context.Exception as NotFoundException;
+
+        context.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+        context.Result = new ObjectResult(new ErrorResponse(notFound.Message));
+    }
+
+    private void DealConfilictException(ExceptionContext context)
     {
         var notFound = context.Exception as NotFoundException;
 

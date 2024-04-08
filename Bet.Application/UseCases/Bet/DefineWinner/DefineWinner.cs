@@ -22,7 +22,7 @@ public class DefineWinner : IDefineWinner
 
         if (bet.Winner is not null) 
         {
-            throw new ValidationErrorException(new List<string> { "O ganhador dessa aposta ja foi definido e não é possivel altera-lo atraves desse recurso" });
+            throw new ConflictException("O ganhador dessa aposta ja foi definido e não é possivel altera-lo atraves desse recurso");
         }
 
         bet.Winner = request.Winner;

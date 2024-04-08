@@ -15,7 +15,7 @@ public class BetController : BaseBetController
 {
     [HttpPost("create")]
     [ProducesResponseType(typeof(ResponseRegisterBet), StatusCodes.Status201Created)]
-    public async Task<IActionResult> RegisterUsuario(
+    public async Task<IActionResult> RegisterAposta(
       [FromServices] IRegisterBetUseCase useCase,
       [FromBody] RequestRegisterBet request)
     {
