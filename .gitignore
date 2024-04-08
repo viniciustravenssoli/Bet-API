@@ -4,6 +4,12 @@
 # Visual Studio (>=2015) project-specific, machine local files
 .vs/
 
+#DBInMemory
+
+Bet.db
+Bet.db-shm
+Bet.db-wal
+
 # User-specific files
 *.suo
 *.user
