@@ -14,6 +14,7 @@ public class UserController : BaseBetController
     [HttpPost("Register")]
     [ProducesResponseType(typeof(ResponseRegisterUser), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> RegisterUsuario(
        [FromServices] IRegisterUserUseCase useCase,
        [FromBody] RequestRegisterUser request)
