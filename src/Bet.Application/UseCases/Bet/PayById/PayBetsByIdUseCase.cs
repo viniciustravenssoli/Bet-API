@@ -1,41 +1,47 @@
-﻿using Bet.Application.BaseExceptions;
+﻿
+using Bet.Application.BaseExceptions;
 using Bet.Application.Services.Email;
 using Bet.Domain.Entities;
 using Bet.Domain.Repository.Bet;
 using Bet.Domain.Repository.User;
 using Bet.Infra;
 
-namespace Bet.Application.UseCases.Bet.Pay;
-public class PayBetsUseCase : IPayBetsUseCase
+namespace Bet.Application.UseCases.Bet.PayById;
+public class PayBetsByIdUseCase : IPayBetsByIdUseCase
 {
     private readonly IBetUpdateOnlyRepository _betUpdateOnlyRepository;
     private readonly IUserUpdateOnlyRepository _userUpdateOnlyRepository;
     private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PayBetsUseCase(IBetUpdateOnlyRepository betUpdateOnlyRepository, IEmailService emailService, IUserUpdateOnlyRepository userUpdateOnlyRepository, IUnitOfWork unitOfWork)
+    public PayBetsByIdUseCase(IBetUpdateOnlyRepository betUpdateOnlyRepository, IUserUpdateOnlyRepository userUpdateOnlyRepository, IEmailService emailService, IUnitOfWork unitOfWork)
     {
         _betUpdateOnlyRepository = betUpdateOnlyRepository;
-        _emailService = emailService;
         _userUpdateOnlyRepository = userUpdateOnlyRepository;
+        _emailService = emailService;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task Execute()
+    public async Task Execute(long id)
     {
-        var unpaidBetsDictionary = await _betUpdateOnlyRepository.GetNotPaidBetsWithAWinnerAsDictionary();
+        var betToPay = await _betUpdateOnlyRepository.GetByIdIncludeUserAndUserBets(id) ?? throw new NotFoundException("Aposta não encontrada");
 
-        foreach (var bet in unpaidBetsDictionary.Values)
-        {
-            await Task.WhenAll(bet.UserBets.Select(async userBet =>
-            {
-                ProcessUserBetPayment(userBet, bet);
-            }));
+        CheckForConflict(betToPay);
 
-            bet.Paid = true;
-            _betUpdateOnlyRepository.Update(bet);
-        }
+        betToPay.UserBets.Select(userBet => ProcessUserBetPayment(userBet, betToPay));
+
+        betToPay.Paid = true;
+        _betUpdateOnlyRepository.Update(betToPay);
         await _unitOfWork.Commit();
+    }
+
+    private void CheckForConflict(Domain.Entities.Bet bet)
+    {
+        if (bet.Paid)
+            throw new ConflictException("Aposta já foi paga");
+
+        if (bet.Winner == null)
+            throw new ConflictException("Aposta sem ganhador definido");
     }
 
     private async Task ProcessUserBetPayment(UserBet userBet, Domain.Entities.Bet bet)
@@ -54,3 +60,4 @@ public class PayBetsUseCase : IPayBetsUseCase
         await _emailService.ConfirmationBetWinner(emailBody, earnings.ToString(), userEmail);
     }
 }
+

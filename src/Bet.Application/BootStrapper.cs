@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Mail;
 using System.Net;
 using EAC.Application.Email;
+using Bet.Application.UseCases.Bet.PayById;
 
 namespace Bet.Application;
 public static class BootStrapper
@@ -72,5 +73,6 @@ public static class BootStrapper
         services.AddScoped<IDefineWinner, DefineWinner>();
         services.AddScoped<IPayBetsUseCase, PayBetsUseCase>();
         services.AddScoped<IGetAllFromUser, GetAllFromUser>();
+        services.AddScoped<IPayBetsByIdUseCase, PayBetsByIdUseCase>();
     }
 }

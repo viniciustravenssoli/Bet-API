@@ -1,6 +1,7 @@
 ﻿using Bet.Application.UseCases.Bet.DefineWinner;
 using Bet.Application.UseCases.Bet.GetAllFromUser;
 using Bet.Application.UseCases.Bet.Pay;
+using Bet.Application.UseCases.Bet.PayById;
 using Bet.Application.UseCases.Bet.Register;
 using Bet.Application.UseCases.User.JoinBet;
 using Bet.Communication.Request;
@@ -63,6 +64,21 @@ public class BetController : BaseBetController
       [FromServices] IPayBetsUseCase useCase)
     {
         await useCase.Execute();
+
+        return Ok("Apostas Pagas");
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("pay/{id}")]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ActionResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> PagarPorId(
+      [FromServices] IPayBetsByIdUseCase useCase,
+      [FromRoute] long id)
+    {
+        await useCase.Execute(id);
 
         return Ok("Apostas Pagas");
     }

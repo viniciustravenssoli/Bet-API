@@ -26,12 +26,21 @@ public class BetRepository : IBetReadOnlyRepository, IBetUpdateOnlyRepository, I
         return await _context.Bets.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<Dictionary<long, Domain.Entities.Bet>> GetNotPaidBetsAsDictionary()
+    public async Task<Domain.Entities.Bet> GetByIdIncludeUserAndUserBets(long id)
+    {
+        return await _context.Bets
+            .Include(b => b.UserBets)
+            .ThenInclude(ub => ub.User)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<Dictionary<long, Domain.Entities.Bet>> GetNotPaidBetsWithAWinnerAsDictionary()
     {
         var unpaidBets = await _context.Bets
             .Include(b => b.UserBets)
             .ThenInclude(ub => ub.User)
             .Where(b => !b.Paid)
+            .Where(b => b.Winner != null)
             .ToDictionaryAsync(b => b.Id); // Usando o ID da aposta como chave
 
         return unpaidBets;
