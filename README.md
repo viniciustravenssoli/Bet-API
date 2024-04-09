@@ -14,7 +14,7 @@ Este projeto consiste em uma API web desenvolvida em C# utilizando o framework .
 ## Tecnologias Utilizadas
 - C# .NET 8: Utilizado como linguagem principal de desenvolvimento.
 - Fluent Validation: Utilizado para realizar validações de requisições.
-- Entity Framework (EF): Utilizado para o gerenciamento de usuários e dados da aplicação.
+- Entity Framework (EF): Utilizado para a criação do banco de dados e opereações como busca, criaçao, alteraçao e deletar
 
 ## Implementações Futuras
 - [x] Implementar sistema de cadastro de usuários.
