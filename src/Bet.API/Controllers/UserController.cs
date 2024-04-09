@@ -1,5 +1,4 @@
-﻿using Bet.Application.BaseExceptions;
-using Bet.Application.UseCases.User.Login;
+﻿using Bet.Application.UseCases.User.Login;
 using Bet.Application.UseCases.User.Register;
 using Bet.Communication.Request;
 using Bet.Communication.Response;
