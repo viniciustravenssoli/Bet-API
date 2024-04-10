@@ -1,6 +1,16 @@
 ﻿namespace Bet.Domain.Entities;
 public class UserBet : BaseEntity
 {
+    public UserBet(Team chosenTeam)
+    {
+        ChosenTeam = chosenTeam;
+    }
+
+    public UserBet()
+    {
+        
+    }
+
     public double Odd { get; set; }
     public long BetId { get; set; }
     public Bet Bet { get; set; }
@@ -8,6 +18,7 @@ public class UserBet : BaseEntity
     public User User { get; set; }
     public double BetAmount { get; set; }
     public Team ChosenTeam { get; set; }
+
 
     public void CalculateOdd(double totalAmount, double amountOnTeamA, double amountOnTeamB)
     {

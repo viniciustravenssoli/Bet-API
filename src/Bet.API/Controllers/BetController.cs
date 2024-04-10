@@ -1,5 +1,6 @@
 ﻿using Bet.Application.UseCases.Bet.DefineWinner;
 using Bet.Application.UseCases.Bet.GetAllFromUser;
+using Bet.Application.UseCases.Bet.GetAllOpenWithOdd;
 using Bet.Application.UseCases.Bet.Pay;
 using Bet.Application.UseCases.Bet.PayById;
 using Bet.Application.UseCases.Bet.Register;
@@ -89,6 +90,16 @@ public class BetController : BaseBetController
     [ProducesResponseType(typeof(ResponseGetAllBets), StatusCodes.Status200OK)]
     public async Task<IActionResult> PegarApostas(
       [FromServices] IGetAllFromUser useCase,
+      [FromQuery] PageQuery request)
+    {
+        var result = await useCase.Execute(request.Skip, request.Top);
+
+        return Ok(result);
+    }
+
+    [HttpGet("pegar-aposta-em-aberto")]
+    public async Task<IActionResult> PegarApostaEmAberto(
+      [FromServices] IGetAllOpenWithOdd useCase,
       [FromQuery] PageQuery request)
     {
         var result = await useCase.Execute(request.Skip, request.Top);

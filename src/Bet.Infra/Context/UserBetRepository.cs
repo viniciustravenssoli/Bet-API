@@ -17,6 +17,14 @@ public class UserBetRepository : IUserBetWriteOnlyRepository
         await _context.UserBets.AddAsync(userBet);
     }
 
+    public async Task<List<UserBet>> GetUnpaidBets()
+    {
+        return await _context.UserBets
+                .Include(ub => ub.Bet)
+                .Where(ub => !ub.Bet.Paid)
+                .ToListAsync();
+    }
+
     public async Task<List<UserBet>> GetUserBetsByBetIdAsync(long betId)
     {
         return await _context.UserBets

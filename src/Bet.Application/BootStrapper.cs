@@ -16,6 +16,7 @@ using System.Net.Mail;
 using System.Net;
 using EAC.Application.Email;
 using Bet.Application.UseCases.Bet.PayById;
+using Bet.Application.UseCases.Bet.GetAllOpenWithOdd;
 
 namespace Bet.Application;
 public static class BootStrapper
@@ -74,5 +75,6 @@ public static class BootStrapper
         services.AddScoped<IPayBetsUseCase, PayBetsUseCase>();
         services.AddScoped<IGetAllFromUser, GetAllFromUser>();
         services.AddScoped<IPayBetsByIdUseCase, PayBetsByIdUseCase>();
+        services.AddScoped<IGetAllOpenWithOdd, GetAllOpenWithOdd>();
     }
 }
