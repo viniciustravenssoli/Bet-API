@@ -48,11 +48,14 @@ public class BetRepository : IBetReadOnlyRepository, IBetUpdateOnlyRepository, I
         return unpaidBets;
     }
 
-    public async Task<List<Domain.Entities.Bet>> GetUnpaidBetsWithUserBets()
+    public async Task<List<Domain.Entities.Bet>> GetUnpaidBetsWithUserBets(int page = 1, int pageSize = 10)
     {
         return await _context.Bets
            .Include(b => b.UserBets)
-           .Where(b => b.Paid == false).ToListAsync();
+           .Where(b => b.Paid == false)
+           .Skip((page - 1) * pageSize)
+           .Take(pageSize)
+           .ToListAsync();
     }
 
     public void Update(Domain.Entities.Bet bet)

@@ -1,7 +1,6 @@
 ﻿using Bet.Communication.Response;
 using Bet.Domain.Entities;
 using Bet.Domain.Repository.Bet;
-using Bet.Domain.Repository.UserBet;
 
 namespace Bet.Application.UseCases.Bet.GetAllOpenWithOdd;
 public class GetAllOpenWithOdd : IGetAllOpenWithOdd
@@ -13,9 +12,9 @@ public class GetAllOpenWithOdd : IGetAllOpenWithOdd
         _betReadOnlyRepository = betReadOnlyRepository;
     }
 
-    public async Task<List<BetInfo>> Execute(int page, int PageSize)
+    public async Task<List<BetInfo>> Execute(int page, int pageSize)
     {
-        var unpaidBets = await _betReadOnlyRepository.GetUnpaidBetsWithUserBets();
+        var unpaidBets = await _betReadOnlyRepository.GetUnpaidBetsWithUserBets(page, pageSize);
 
         var betInfos = unpaidBets.Select(bet =>
         {
