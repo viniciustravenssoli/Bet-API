@@ -7,12 +7,10 @@ namespace Bet.Application.UseCases.Bet.GetAllOpenWithOdd;
 public class GetAllOpenWithOdd : IGetAllOpenWithOdd
 {
     private readonly IBetReadOnlyRepository _betReadOnlyRepository;
-    private readonly IUserBetWriteOnlyRepository _userBetWriteOnlyRepository;
 
-    public GetAllOpenWithOdd(IBetReadOnlyRepository betReadOnlyRepository, IUserBetWriteOnlyRepository userBetWriteOnlyRepository)
+    public GetAllOpenWithOdd(IBetReadOnlyRepository betReadOnlyRepository)
     {
         _betReadOnlyRepository = betReadOnlyRepository;
-        _userBetWriteOnlyRepository = userBetWriteOnlyRepository;
     }
 
     public async Task<List<BetInfo>> Execute(int page, int PageSize)
