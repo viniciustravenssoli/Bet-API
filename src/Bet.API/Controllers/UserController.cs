@@ -1,7 +1,9 @@
-﻿using Bet.Application.UseCases.User.Login;
+﻿using Bet.Application.UseCases.User.ChangePassword;
+using Bet.Application.UseCases.User.Login;
 using Bet.Application.UseCases.User.Register;
 using Bet.Communication.Request;
 using Bet.Communication.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bet.API.Controllers;
@@ -23,8 +25,8 @@ public class UserController : BaseBetController
         return Created(string.Empty, result);
     }
 
-    [Route("Login")]
     [HttpPost]
+    [Route("Login")]
     [ProducesResponseType(typeof(ResponseLogin), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] RequestLogin request,
@@ -33,5 +35,18 @@ public class UserController : BaseBetController
         var response = await useCase.Execute(request);
 
         return Ok(response);
+    }
+
+    [HttpPut]
+    [Authorize]
+    [Route("alterar-senha")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> AlterarSenha(
+            [FromServices] IChangePasswordUseCase useCase,
+            [FromBody] RequestChangePassword request)
+    {
+        await useCase.Execute(request);
+
+        return NoContent();
     }
 }

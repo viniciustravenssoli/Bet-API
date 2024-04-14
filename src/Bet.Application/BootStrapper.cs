@@ -17,6 +17,7 @@ using System.Net;
 using EAC.Application.Email;
 using Bet.Application.UseCases.Bet.PayById;
 using Bet.Application.UseCases.Bet.GetAllOpenWithOdd;
+using Bet.Application.UseCases.User.ChangePassword;
 
 namespace Bet.Application;
 public static class BootStrapper
@@ -76,5 +77,6 @@ public static class BootStrapper
         services.AddScoped<IGetAllFromUser, GetAllFromUser>();
         services.AddScoped<IPayBetsByIdUseCase, PayBetsByIdUseCase>();
         services.AddScoped<IGetAllOpenWithOdd, GetAllOpenWithOdd>();
+        services.AddScoped<IChangePasswordUseCase, ChangePasswordUseCase>();
     }
 }
