@@ -1,4 +1,5 @@
 ﻿using Bet.Application.UseCases.User.ChangePassword;
+using Bet.Application.UseCases.User.ChangeUserData;
 using Bet.Application.UseCases.User.Login;
 using Bet.Application.UseCases.User.Register;
 using Bet.Communication.Request;
@@ -40,6 +41,7 @@ public class UserController : BaseBetController
     [HttpPut]
     [Authorize]
     [Route("alterar-senha")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> AlterarSenha(
             [FromServices] IChangePasswordUseCase useCase,
@@ -49,4 +51,19 @@ public class UserController : BaseBetController
 
         return NoContent();
     }
+
+    [HttpPatch]
+    [Authorize]
+    [Route("alterar-dados")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> AlterarDados(
+        [FromServices] IChangeUserDataUseCase useCase,
+        [FromBody] RequestChangeUserData request)
+    {
+        await useCase.Execute(request);
+
+        return NoContent();
+    }
+
 }

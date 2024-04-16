@@ -24,13 +24,11 @@ public class ChangePasswordUseCase : IChangePasswordUseCase
     {
         var loggedUser = await _loggedUser.GetUser();
 
-        var user = await _repositorio.GetById(loggedUser.Id);
+        Validate(request, loggedUser);
 
-        Validate(request, user);
+        loggedUser.Password = _passwordHasher.Hash(request.NewPassword);
 
-        user.Password = _passwordHasher.Hash(request.NewPassword);
-
-        _repositorio.Update(user);
+        _repositorio.Update(loggedUser);
 
         await _unitOfWork.Commit();
     }
