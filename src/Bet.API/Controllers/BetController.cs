@@ -99,8 +99,8 @@ public class BetController : BaseBetController
 
     [HttpGet("pegar-aposta-em-aberto")]
     public async Task<IActionResult> PegarApostaEmAberto(
-      [FromServices] IGetAllOpenWithOdd useCase,
-      [FromQuery] PageQuery request)
+    [FromServices] IGetAllOpenWithOdd useCase,
+    [FromQuery] PageQuery request)
     {
         var result = await useCase.Execute(request.Skip, request.Top);
 

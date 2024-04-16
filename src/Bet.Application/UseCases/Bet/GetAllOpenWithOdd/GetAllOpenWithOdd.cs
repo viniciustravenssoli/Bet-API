@@ -12,7 +12,7 @@ public class GetAllOpenWithOdd : IGetAllOpenWithOdd
         _betReadOnlyRepository = betReadOnlyRepository;
     }
 
-    public async Task<List<BetInfo>> Execute(int page, int pageSize)
+    public async Task<ResponseBetInfo> Execute(int page, int pageSize)
     {
         var unpaidBets = await _betReadOnlyRepository.GetUnpaidBetsWithUserBets(page, pageSize);
 
@@ -32,7 +32,12 @@ public class GetAllOpenWithOdd : IGetAllOpenWithOdd
             };
         }).ToList();
 
-        return betInfos;
+        var response = new ResponseBetInfo
+        {
+            betInfos = betInfos,
+        };
+
+        return response;
     }
 
     private UserBet CreateUserBet(Team chosenTeam, double totalAmount, double amountOnTeamA, double amountOnTeamB)
