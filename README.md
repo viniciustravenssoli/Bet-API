@@ -47,7 +47,7 @@ Para adicionar e atualizar o banco de dados usando Entity Framework Core (EF Cor
 2. Execute o seguinte comando para adicionar uma nova migração:
 
     ```bash
-   dotnet ef migrations add -s ..\API\API.csproj AddinStudents  --verbose
+   dotnet ef migrations add -s ..\API\API.csproj NameOfMigration  --verbose
     ```
 
     Certifique-se de substituir `NameOfMigration` pelo nome desejado para a migração.
