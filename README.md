@@ -40,14 +40,15 @@ Para adicionar e atualizar o banco de dados usando Entity Framework Core (EF Cor
 
 1. Abra o terminal ou prompt de comando.
 2. Navegue até o diretório onde está o projeto de Infra (onde estão suas classes de contexto de banco de dados e configurações de entidade).
-3. Execute o seguinte comando para criar uma nova migração:
-dotnet ef migrations add NomeDaSuaMigration -s ..\API\API.csproj --verbose
+3. Execute o comando abaixo para criar uma nova migração:
+4. dotnet ef migrations add NomeDaSuaMigration -s ..\API\API.csproj --verbose
 
 NomeDaSuaMigration: Substitua isso pelo nome significativo da sua migração.
 
 ### Atualizar o Banco de dados
 
-1. Execute o seguinte comando para atualizar o banco baseado na ultima migração:
-dotnet ef database update -s ..\API\API.csproj --verbose
+1. Execute o comando abaixo para atualizar o banco baseado na ultima migração:
+2. dotnet ef database update -s ..\API\API.csproj --verbose
 
-2. O parâmetro --verbose é opcional, mas pode ser útil para ver informações detalhadas sobre o processo de migração e atualização do banco de dados.
+
+3. O parâmetro --verbose é opcional, mas pode ser útil para ver informações detalhadas sobre o processo de migração e atualização do banco de dados.
