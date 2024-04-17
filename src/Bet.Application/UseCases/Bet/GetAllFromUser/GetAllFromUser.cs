@@ -1,6 +1,7 @@
 ﻿
 using Bet.Application.Services.LoggedUser;
 using Bet.Communication.Response;
+using Bet.Domain.Entities;
 using Bet.Domain.Repository.UserBet;
 
 namespace Bet.Application.UseCases.Bet.GetAllFromUser;
@@ -21,9 +22,29 @@ public class GetAllFromUser : IGetAllFromUser
 
         var betsFromUser = await _userBetWriteOnlyRepository.GetUserBetsWithPaginationAsync(user.Id, page, PageSize);
 
-        var response = new ResponseGetAllBets(betsFromUser);
+        var response = new ResponseGetAllBets(ConvertToBetFromUserList(betsFromUser));
 
         return response;
 
+    }
+
+    private List<BetFromUser> ConvertToBetFromUserList(List<UserBet> userBets)
+    {
+        var betsFromUser = new List<BetFromUser>();
+
+        foreach (var userBet in userBets)
+        {
+            var betFromUser = new BetFromUser
+            {
+                Odd = userBet.Odd,
+                BetId = userBet.BetId,
+                BetAmount = userBet.BetAmount,
+                CreatedAt = userBet.CreatedAt,
+            };
+
+            betsFromUser.Add(betFromUser);
+        }
+
+        return betsFromUser;
     }
 }

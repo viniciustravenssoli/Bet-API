@@ -98,6 +98,7 @@ public class BetController : BaseBetController
     }
 
     [HttpGet("pegar-aposta-em-aberto")]
+    [ProducesResponseType(typeof(ResponseBetInfo), StatusCodes.Status200OK)]
     public async Task<IActionResult> PegarApostaEmAberto(
     [FromServices] IGetAllOpenWithOdd useCase,
     [FromQuery] PageQuery request)

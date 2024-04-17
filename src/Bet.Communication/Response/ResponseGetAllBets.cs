@@ -3,10 +3,11 @@
 namespace Bet.Communication.Response;
 public class ResponseGetAllBets
 {
-    public List<UserBet> bets { get; set; }
+    public List<BetFromUser> BetFromUsers { get; }
 
-    public ResponseGetAllBets(List<UserBet> userBets)
+
+    public ResponseGetAllBets(List<BetFromUser> betFromUsers)
     {
-        bets = userBets;
+        BetFromUsers = betFromUsers;
     }
 }
