@@ -47,6 +47,7 @@ NomeDaSuaMigration: Substitua isso pelo nome significativo da sua migração.
 
 ### Atualizar o Banco de dados
 
+1. Execute o seguinte comando para atualizar o banco baseado na ultima migração:
 dotnet ef database update -s ..\API\API.csproj --verbose
 
-O parâmetro --verbose é opcional, mas pode ser útil para ver informações detalhadas sobre o processo de migração e atualização do banco de dados.
+2. O parâmetro --verbose é opcional, mas pode ser útil para ver informações detalhadas sobre o processo de migração e atualização do banco de dados.
