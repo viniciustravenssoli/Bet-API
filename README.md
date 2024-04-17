@@ -32,3 +32,21 @@ A funcionalidade de notificação por e-mail quando uma aposta é ganha está pl
 2. Abra o projeto em sua IDE preferida.
 3. Certifique-se de ter o .NET 8 SDK instalado em sua máquina.
 4. Compile e execute o projeto.
+
+## Adicionar e Atualizar Banco de Dados com EF Core
+Para adicionar e atualizar o banco de dados usando Entity Framework Core (EF Core) no seu projeto, você precisará usar a CLI do EF Core. Aqui está como você pode fazer isso:
+
+### Adicionar uma Nova Migração
+
+1. Abra o terminal ou prompt de comando.
+2. Navegue até o diretório onde está o projeto de Infra (onde estão suas classes de contexto de banco de dados e configurações de entidade).
+3. Execute o seguinte comando para criar uma nova migração:
+dotnet ef migrations add NomeDaSuaMigration -s ..\API\API.csproj --verbose
+
+NomeDaSuaMigration: Substitua isso pelo nome significativo da sua migração.
+
+### Atualizar o Banco de dados
+
+dotnet ef database update -s ..\API\API.csproj --verbose
+
+O parâmetro --verbose é opcional, mas pode ser útil para ver informações detalhadas sobre o processo de migração e atualização do banco de dados.
