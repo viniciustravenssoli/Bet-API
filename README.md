@@ -23,9 +23,7 @@ Este projeto consiste em uma API web desenvolvida em C# utilizando o framework .
 - [x] Implementar controle de papéis de usuário (Admin vs. Normal).
 - [x] Integrar cálculo de Odd para apostas.
 - [x] Notificar por e-mail quando uma aposta é ganha.
-
-### Nota:
-A funcionalidade de notificação por e-mail quando uma aposta é ganha está planejada para ser implementada em uma versão futura do projeto.
+- [x] Usuarios podem definir um limite diario de apostas, assim quando atingi-lo não podera realizar mais aposta ate o final do dia.
 
 ## Instalação e Uso
 1. Clone o repositório para sua máquina local.
