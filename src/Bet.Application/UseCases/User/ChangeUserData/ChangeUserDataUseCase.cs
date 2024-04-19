@@ -33,6 +33,7 @@ public class ChangeUserDataUseCase : IChangeUserDataUseCase
         user.Email = request.NewEmail;
         user.Name = request.NewName;
         user.Phone = request.NewPhone;
+        user.MaxDailyBets = request.MaxLimitPerDay;
 
         _updateOnlyRepository.Update(user);
         await _unitOfWork.Commit();

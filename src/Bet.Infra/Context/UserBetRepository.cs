@@ -12,6 +12,12 @@ public class UserBetRepository : IUserBetWriteOnlyRepository
         _context = context;
     }
 
+    public async Task<int> GetUserBetsMadeTodayAsync(long userId)
+    {
+        return await _context.UserBets
+                             .CountAsync(b => b.UserId == userId && b.CreatedAt.Date == DateTime.Today);
+    }
+
     public async Task Add(UserBet userBet)
     {
         await _context.UserBets.AddAsync(userBet);

@@ -3,6 +3,7 @@ using System;
 using Bet.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bet.Infra.Migrations
 {
     [DbContext(typeof(BetContext))]
-    partial class BetContextModelSnapshot : ModelSnapshot
+    [Migration("20240419161025_Adding_Max_Limit_Property_Per_Day")]
+    partial class Adding_Max_Limit_Property_Per_Day
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");

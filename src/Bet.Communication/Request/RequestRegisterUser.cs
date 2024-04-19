@@ -5,4 +5,5 @@ public class RequestRegisterUser
     public string Email { get; set; }
     public string Password { get; set; }
     public string Phone { get; set; }
+    public int MaxDailyBets { get; set; }
 }

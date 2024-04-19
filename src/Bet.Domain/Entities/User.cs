@@ -3,6 +3,7 @@
 namespace Bet.Domain.Entities;
 public class User : BaseEntity
 {
+    public int MaxDailyBets { get; set; } = 8;
     public string Name { get; set; }
     public double Balance { get; set; } = 0;
     public string Email { get; set; }

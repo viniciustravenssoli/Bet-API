@@ -1,6 +1,5 @@
 ﻿using Bet.Application.BaseExceptions;
 using Bet.Application.Services.LoggedUser;
-using Bet.Application.UseCases.User.Login;
 using Bet.Communication.Request;
 using Bet.Communication.Response;
 using Bet.Domain.Entities;
@@ -8,6 +7,10 @@ using Bet.Domain.Repository.Bet;
 using Bet.Domain.Repository.User;
 using Bet.Domain.Repository.UserBet;
 using Bet.Infra;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Bet.Application.UseCases.User.JoinBet
 {
@@ -35,12 +38,13 @@ namespace Bet.Application.UseCases.User.JoinBet
 
         public async Task<ResponseJoinBet> Execute(RequestJoinBet request)
         {
-            
-            var user = await _loggedUser.GetUser() ?? throw new NotFoundException("Usuario não encontrado");
+            var user = await _loggedUser.GetUser() ?? throw new NotFoundException("Usuário não encontrado");
 
             var bet = await _betReadOnlyRepository.GetById(request.BetId) ?? throw new NotFoundException("Aposta não encontrada");
 
-            await Validate(request, bet, user);
+            var betsMadeToday = await _userBetRepository.GetUserBetsMadeTodayAsync(user.Id);
+
+            await Validate(request, bet, user, betsMadeToday);
 
             var userBets = await _userBetRepository.GetUserBetsByBetIdAsync(request.BetId);
 
@@ -62,27 +66,36 @@ namespace Bet.Application.UseCases.User.JoinBet
             return response;
         }
 
-        private async Task Validate(RequestJoinBet request, Domain.Entities.Bet bet, Domain.Entities.User user)
+        private async Task Validate(RequestJoinBet request, Domain.Entities.Bet bet, Domain.Entities.User user, int betsMadeToday)
         {
             var validator = new JoinBetValidator();
             var result = validator.Validate(request);
 
-            if (!result.IsValid)
+            var errorMessages = result.Errors.Select(e => e.ErrorMessage).ToList();
+
+            var validationErrors = new List<string>();
+
+            validationErrors.AddRange(errorMessages);
+
+            validationErrors.AddRange(
+                bet.Paid ? new[] { "Não é possível entrar em apostas já pagas." } : Enumerable.Empty<string>()
+            );
+
+            validationErrors.AddRange(
+                user.Balance < request.BetAmount ? new[] { "Saldo insuficiente para realizar a aposta." } : Enumerable.Empty<string>()
+            );
+
+            if (user.MaxDailyBets <= betsMadeToday)
             {
-                var errorsMessages = result.Errors.Select(e => e.ErrorMessage).ToList();
-                throw new ValidationErrorException(errorsMessages);
+                throw new ConflictException("Você atingiu seu limite diário de apostas");
             }
 
-            if (bet.Paid)
+            if (validationErrors.Any())
             {
-                throw new ValidationErrorException(new List<string> { "Não é possivel entrar em apostas ja pagas." });
-            }
-
-            if (user.Balance < request.BetAmount)
-            {
-                throw new ValidationErrorException(new List<string> { "Saldo insuficiente para realizar a aposta." });
+                throw new ValidationErrorException(validationErrors);
             }
         }
+
 
         private (double totalAmount, double amountOnTeamA, double amountOnTeamB) CalculateAmounts(IEnumerable<UserBet> userBets)
         {
