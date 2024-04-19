@@ -85,7 +85,7 @@ public class BetController : BaseBetController
     }
 
     [Authorize]
-    [HttpGet("pegar-todas")]
+    [HttpGet("get-all")]
     [ProducesResponseType(typeof(ActionResult), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ResponseGetAllBets), StatusCodes.Status200OK)]
     public async Task<IActionResult> PegarApostas(
@@ -97,7 +97,7 @@ public class BetController : BaseBetController
         return Ok(result);
     }
 
-    [HttpGet("pegar-aposta-em-aberto")]
+    [HttpGet("get-all-open")]
     [ProducesResponseType(typeof(ResponseBetInfo), StatusCodes.Status200OK)]
     public async Task<IActionResult> PegarApostaEmAberto(
     [FromServices] IGetAllOpenWithOdd useCase,

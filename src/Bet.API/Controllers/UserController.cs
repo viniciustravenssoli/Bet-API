@@ -40,7 +40,7 @@ public class UserController : BaseBetController
 
     [HttpPut]
     [Authorize]
-    [Route("alterar-senha")]
+    [Route("change-password")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> AlterarSenha(
@@ -54,7 +54,7 @@ public class UserController : BaseBetController
 
     [HttpPatch]
     [Authorize]
-    [Route("alterar-dados")]
+    [Route("change-data")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> AlterarDados(
