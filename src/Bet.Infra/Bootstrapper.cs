@@ -1,5 +1,6 @@
 ﻿using Bet.Domain.Extesions;
 using Bet.Domain.Repository.Bet;
+using Bet.Domain.Repository.Team;
 using Bet.Domain.Repository.User;
 using Bet.Domain.Repository.UserBet;
 using Bet.Infra.Context;
@@ -42,5 +43,6 @@ public static class Bootstrapper
         services.AddScoped<IBetUpdateOnlyRepository, BetRepository>();
         services.AddScoped<IBetWriteOnlyRepository, BetRepository>();
         services.AddScoped<IUserBetWriteOnlyRepository, UserBetRepository>();
+        services.AddScoped<ITeamRepository, TeamRepository>();
     }
 }

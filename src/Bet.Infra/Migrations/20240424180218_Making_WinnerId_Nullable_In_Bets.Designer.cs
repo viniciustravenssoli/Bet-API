@@ -3,6 +3,7 @@ using System;
 using Bet.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bet.Infra.Migrations
 {
     [DbContext(typeof(BetContext))]
-    partial class BetContextModelSnapshot : ModelSnapshot
+    [Migration("20240424180218_Making_WinnerId_Nullable_In_Bets")]
+    partial class Making_WinnerId_Nullable_In_Bets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -38,8 +41,10 @@ namespace Bet.Infra.Migrations
                     b.Property<long>("VisitorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("WinnerId")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("WinnerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0L);
 
                     b.HasKey("Id");
 
@@ -161,7 +166,9 @@ namespace Bet.Infra.Migrations
 
                     b.HasOne("Bet.Domain.Entities.Team", "Winner")
                         .WithMany()
-                        .HasForeignKey("WinnerId");
+                        .HasForeignKey("WinnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Home");
 

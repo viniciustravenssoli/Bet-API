@@ -3,6 +3,7 @@ using System;
 using Bet.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bet.Infra.Migrations
 {
     [DbContext(typeof(BetContext))]
-    partial class BetContextModelSnapshot : ModelSnapshot
+    [Migration("20240424172659_Adding_Entity_Team")]
+    partial class Adding_Entity_Team
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -148,7 +151,7 @@ namespace Bet.Infra.Migrations
             modelBuilder.Entity("Bet.Domain.Entities.Bet", b =>
                 {
                     b.HasOne("Bet.Domain.Entities.Team", "Home")
-                        .WithMany("Bets")
+                        .WithMany()
                         .HasForeignKey("HomeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -200,11 +203,6 @@ namespace Bet.Infra.Migrations
             modelBuilder.Entity("Bet.Domain.Entities.Bet", b =>
                 {
                     b.Navigation("UserBets");
-                });
-
-            modelBuilder.Entity("Bet.Domain.Entities.Team", b =>
-                {
-                    b.Navigation("Bets");
                 });
 
             modelBuilder.Entity("Bet.Domain.Entities.User", b =>
