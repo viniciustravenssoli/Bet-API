@@ -3,7 +3,7 @@
 namespace Bet.Communication.Request;
 public class RequestJoinBet
 {
-    public Team Chose {  get; set; }
+    public long ChoseTeamId {  get; set; }
     public double BetAmount { get; set; }
     public long BetId { get; set; } 
 }
