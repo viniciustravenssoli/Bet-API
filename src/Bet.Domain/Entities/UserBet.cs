@@ -17,6 +17,7 @@ public class UserBet : BaseEntity
     public long UserId { get; set; }
     public User User { get; set; }
     public double BetAmount { get; set; }
+    public long ChosenTeamId { get; set; }
     public Team ChosenTeam { get; set; }
 
 
@@ -35,15 +36,15 @@ public class UserBet : BaseEntity
         double proportionB = amountOnTeamB / totalAmount;
 
         // Calcula a odd com base na proporção da equipe escolhida
-        Odd = ChosenTeam == Team.TeamA ? 1 / proportionA : 1 / proportionB;
+        Odd = ChosenTeam == Bet.Visitor ? 1 / proportionA : 1 / proportionB;
         Odd = Math.Round(Odd, 1);
     }
 }
 
 
 
-public enum Team
-{
-    TeamA = 0,
-    TeamB = 1
-}
+//public enum Team
+//{
+//    TeamA = 0,
+//    TeamB = 1
+//}
