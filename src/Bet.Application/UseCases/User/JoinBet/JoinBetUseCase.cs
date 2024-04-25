@@ -7,10 +7,6 @@ using Bet.Domain.Repository.Bet;
 using Bet.Domain.Repository.User;
 using Bet.Domain.Repository.UserBet;
 using Bet.Infra;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Bet.Application.UseCases.User.JoinBet
 {
@@ -50,7 +46,7 @@ namespace Bet.Application.UseCases.User.JoinBet
 
             var (totalAmount, amountOnTeamA, amountOnTeamB) = CalculateAmounts(userBets);
 
-            var userBet = CreateUserBet(user.Id, bet.Id, request.BetAmount, request.Chose, totalAmount, amountOnTeamA, amountOnTeamB);
+            var userBet = CreateUserBet(user.Id, bet.Id, request.BetAmount, request.ChoseTeamId, totalAmount, amountOnTeamA, amountOnTeamB);
 
             user.Balance -= userBet.BetAmount;
 
@@ -100,19 +96,20 @@ namespace Bet.Application.UseCases.User.JoinBet
         private (double totalAmount, double amountOnTeamA, double amountOnTeamB) CalculateAmounts(IEnumerable<UserBet> userBets)
         {
             var totalAmount = userBets.Sum(ub => ub.BetAmount);
-            var amountOnTeamA = userBets.Where(ub => ub.ChosenTeam == Team.TeamA).Sum(ub => ub.BetAmount);
-            var amountOnTeamB = userBets.Where(ub => ub.ChosenTeam == Team.TeamB).Sum(ub => ub.BetAmount);
+            var amountOnTeamA = userBets.Where(ub => ub.ChosenTeam == ub.Bet.Visitor).Sum(ub => ub.BetAmount);
+            var amountOnTeamB = userBets.Where(ub => ub.ChosenTeam == ub.Bet.Home).Sum(ub => ub.BetAmount);
             return (totalAmount, amountOnTeamA, amountOnTeamB);
         }
 
-        private UserBet CreateUserBet(long userId, long betId, double betAmount, Team chosenTeam, double totalAmount, double amountOnTeamA, double amountOnTeamB)
+        private UserBet CreateUserBet(long userId, long betId, double betAmount, long chosenTeamId, double totalAmount, double amountOnTeamA, double amountOnTeamB)
         {
             var userBet = new UserBet
             {
                 UserId = userId,
                 BetId = betId,
                 BetAmount = betAmount,
-                ChosenTeam = chosenTeam,
+                ChosenTeamId = chosenTeamId
+
             };
 
             userBet.CalculateOdd(totalAmount, amountOnTeamA, amountOnTeamB);

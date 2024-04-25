@@ -23,9 +23,10 @@ public class RegisterBetUseCase : IRegisterBetUseCase
 
         var bet = new Domain.Entities.Bet
         {
-            Winner = null,
             ExpiryTime = request.ExpiryTime,
             Paid = false,
+            HomeId = request.HomeId,
+            VisitorId = request.VisitorId
         };
 
         await _betRepository.Add(bet);
