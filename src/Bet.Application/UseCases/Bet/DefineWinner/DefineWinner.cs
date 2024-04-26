@@ -32,7 +32,7 @@ public class DefineWinner : IDefineWinner
 
         if (team.Id != bet.HomeId && team.Id != bet.VisitorId) 
         {
-            throw new ConflictException("Time informado não pertence a essa aposta ou não existe");
+            throw new ConflictException("Time informado não pertence a essa aposta");
         }
 
         bet.WinnerId = request.TeamWinnerId;
