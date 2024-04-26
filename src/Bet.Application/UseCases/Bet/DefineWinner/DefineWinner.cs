@@ -1,6 +1,7 @@
 ﻿using Bet.Application.BaseExceptions;
 using Bet.Communication.Request;
 using Bet.Domain.Repository.Bet;
+using Bet.Domain.Repository.Team;
 using Bet.Infra;
 
 namespace Bet.Application.UseCases.Bet.DefineWinner;
@@ -8,11 +9,13 @@ public class DefineWinner : IDefineWinner
 {
     private readonly IBetUpdateOnlyRepository _updateBetRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ITeamRepository _teamRepository;
 
-    public DefineWinner(IBetUpdateOnlyRepository updateBetRepository, IUnitOfWork unitOfWork)
+    public DefineWinner(IBetUpdateOnlyRepository updateBetRepository, IUnitOfWork unitOfWork, ITeamRepository teamRepository)
     {
         _updateBetRepository = updateBetRepository;
         _unitOfWork = unitOfWork;
+        _teamRepository = teamRepository;
     }
 
     public async Task Execute(RequestDefineWinner request, long id)
@@ -25,7 +28,14 @@ public class DefineWinner : IDefineWinner
             throw new ConflictException("O ganhador dessa aposta ja foi definido e não é possivel altera-lo atraves desse recurso");
         }
 
-        bet.Winner = request.Winner;
+        var team = await _teamRepository.GetByIdAsync(request.TeamWinnerId) ?? throw new NotFoundException("Time não encontrado");
+
+        if (team.Id != bet.HomeId && team.Id != bet.VisitorId) 
+        {
+            throw new ConflictException("Time informado não pertence a essa aposta ou não existe");
+        }
+
+        bet.WinnerId = request.TeamWinnerId;
         _updateBetRepository.Update(bet);
 
         await _unitOfWork.Commit();

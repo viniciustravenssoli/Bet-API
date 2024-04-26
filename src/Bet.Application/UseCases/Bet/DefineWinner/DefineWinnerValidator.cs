@@ -6,6 +6,6 @@ public class DefineWinnerValidator : AbstractValidator<RequestDefineWinner>
 {
     public DefineWinnerValidator()
     {
-        RuleFor(x => x.Winner).IsInEnum().WithMessage("Valor Invalido");
+        RuleFor(x => x.TeamWinnerId).NotNull().NotEmpty().WithMessage("Valor Invalido");
     }
 }
