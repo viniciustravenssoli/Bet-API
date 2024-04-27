@@ -28,7 +28,8 @@ public class PayBetsByIdUseCase : IPayBetsByIdUseCase
 
         CheckForConflict(betToPay);
 
-        betToPay.UserBets.Select(userBet => ProcessUserBetPayment(userBet, betToPay));
+        var tasks = betToPay.UserBets.Select(userBet => ProcessUserBetPayment(userBet, betToPay));
+        await Task.WhenAll(tasks);
 
         betToPay.Paid = true;
         _betUpdateOnlyRepository.Update(betToPay);
@@ -40,13 +41,13 @@ public class PayBetsByIdUseCase : IPayBetsByIdUseCase
         if (bet.Paid)
             throw new ConflictException("Aposta já foi paga");
 
-        if (bet.Winner == null)
+        if (bet.WinnerId == null)
             throw new ConflictException("Aposta sem ganhador definido");
     }
 
     private async Task ProcessUserBetPayment(UserBet userBet, Domain.Entities.Bet bet)
     {
-        if (bet.Winner == userBet.ChosenTeam)
+        if (bet.WinnerId == userBet.ChosenTeamId)
         {
             var earnings = userBet.BetAmount * userBet.Odd;
             await _userUpdateOnlyRepository.BulkUpdateBalanceAsync(userBet.UserId, earnings);
