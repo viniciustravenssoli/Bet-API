@@ -45,6 +45,7 @@ public class UserBetRepository : IUserBetWriteOnlyRepository
             .OrderByDescending(ub => ub.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .AsNoTracking()
             .ToListAsync();
     }
 }

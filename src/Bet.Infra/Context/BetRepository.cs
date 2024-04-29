@@ -41,9 +41,9 @@ public class BetRepository : IBetReadOnlyRepository, IBetUpdateOnlyRepository, I
         var unpaidBets = await _context.Bets
             .Include(b => b.UserBets)
             .ThenInclude(ub => ub.User)
-           
             .Where(b => !b.Paid)
             .Where(b => b.Winner != null)
+            .AsNoTracking()
             .ToDictionaryAsync(b => b.Id); // Usando o ID da aposta como chave
 
         return unpaidBets;
