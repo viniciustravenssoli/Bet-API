@@ -10,7 +10,7 @@ public class BetFromUser
     public double Odd { get; set; }
     public long BetId { get; set; }
     public double BetAmount { get; set; }
-    public int ChosenTeam { get; set; }
+    public long ChosenTeam { get; set; }
     public long Id { get; set; }
     public DateTime CreatedAt { get; set; }
 }

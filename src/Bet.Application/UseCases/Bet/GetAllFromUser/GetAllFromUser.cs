@@ -37,9 +37,11 @@ public class GetAllFromUser : IGetAllFromUser
             var betFromUser = new BetFromUser
             {
                 Odd = userBet.Odd,
-                BetId = userBet.BetId,
+                ChosenTeam = userBet.ChosenTeamId,
                 BetAmount = userBet.BetAmount,
                 CreatedAt = userBet.CreatedAt,
+                Id = userBet.Id,
+                BetId = userBet.BetId,
             };
 
             betsFromUser.Add(betFromUser);
