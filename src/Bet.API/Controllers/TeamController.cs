@@ -25,7 +25,7 @@ public class TeamController : BaseBetController
     [Route("update-team/{teamId}")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> AlterarDados(
+    public async Task<IActionResult> AtualizarTime(
         [FromServices] IUpdateTeamUseCase useCase,
         [FromBody] RequestUpdateTeam request,
         [FromRoute] long teamId)
