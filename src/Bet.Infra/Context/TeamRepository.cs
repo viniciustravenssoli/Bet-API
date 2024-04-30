@@ -20,4 +20,8 @@ public class TeamRepository : ITeamRepository
     {
         return await _context.Teams.FindAsync(id);
     }
+    public void Update(Team team)
+    {
+        _context.Teams.Update(team);
+    }
 }

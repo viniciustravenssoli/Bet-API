@@ -20,6 +20,7 @@ using Bet.Application.UseCases.Bet.GetAllOpenWithOdd;
 using Bet.Application.UseCases.User.ChangePassword;
 using Bet.Application.UseCases.User.ChangeUserData;
 using Bet.Application.UseCases.Team.RegisterTeam;
+using Bet.Application.UseCases.Team.Update;
 
 namespace Bet.Application;
 public static class BootStrapper
@@ -82,5 +83,6 @@ public static class BootStrapper
         services.AddScoped<IChangePasswordUseCase, ChangePasswordUseCase>();
         services.AddScoped<IChangeUserDataUseCase, ChangeUserDataUseCase>();
         services.AddScoped<IRegisterTeamUseCase, RegisterTeamUseCase>();
+        services.AddScoped<IUpdateTeamUseCase, UpdateTeamUseCase>();
     }
 }

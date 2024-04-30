@@ -1,5 +1,8 @@
 ﻿using Bet.Application.UseCases.Team.RegisterTeam;
+using Bet.Application.UseCases.Team.Update;
+using Bet.Application.UseCases.User.ChangeUserData;
 using Bet.Communication.Request;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bet.API.Controllers;
@@ -15,5 +18,20 @@ public class TeamController : BaseBetController
         await useCase.Execute(request);
 
         return Created(string.Empty, "Criado com sucesso");
+    }
+
+    [HttpPatch]
+    [Authorize]
+    [Route("update-team/{teamId}")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> AlterarDados(
+        [FromServices] IUpdateTeamUseCase useCase,
+        [FromBody] RequestUpdateTeam request,
+        [FromRoute] long teamId)
+    {
+        await useCase.Execute(request, teamId);
+
+        return NoContent();
     }
 }

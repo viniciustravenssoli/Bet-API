@@ -1,7 +1,6 @@
 ﻿using Bet.Communication.Request;
 using Bet.Domain.Repository.Team;
 using Bet.Infra;
-using Bet.Infra.Context;
 
 namespace Bet.Application.UseCases.Team.RegisterTeam;
 public class RegisterTeamUseCase : IRegisterTeamUseCase
