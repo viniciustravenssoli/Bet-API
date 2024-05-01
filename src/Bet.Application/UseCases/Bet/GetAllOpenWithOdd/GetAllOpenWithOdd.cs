@@ -24,19 +24,19 @@ public class GetAllOpenWithOdd : IGetAllOpenWithOdd
             var userBets = bet.UserBets.ToList();
             var (totalAmount, amountOnTeamA, amountOnTeamB) = CalculateAmounts(userBets);
 
-            var teamA = await _teamRepository.GetByIdAsync(bet.VisitorId);
-            var teamB = await _teamRepository.GetByIdAsync(bet.HomeId);
+            var teamA = await _teamRepository.GetByIdAsync(bet.HomeId);
+            var teamB = await _teamRepository.GetByIdAsync(bet.VisitorId);
 
-            var userBetOnA = CreateUserBet(teamA, totalAmount, amountOnTeamA, amountOnTeamB);
-            var userBetOnB = CreateUserBet(teamB, totalAmount, amountOnTeamA, amountOnTeamB);
+            var userBetOnA = CreateUserBet(teamA, totalAmount, amountOnTeamA, amountOnTeamB, bet);
+            var userBetOnB = CreateUserBet(teamB, totalAmount, amountOnTeamA, amountOnTeamB, bet);
 
             return new BetInfo
             {
                 BetId = bet.Id,
                 TeamAOdd = userBetOnA.Odd,
                 TeamBOdd = userBetOnB.Odd,
-                HomeTeamName = teamB.Name,
-                VisitorTeamName = teamA.Name,
+                HomeTeamName = teamA.Name,
+                VisitorTeamName = teamB.Name,
             };
         }).ToList();
 
@@ -50,19 +50,19 @@ public class GetAllOpenWithOdd : IGetAllOpenWithOdd
         return response;
     }
 
-    private UserBet CreateUserBet(Domain.Entities.Team chosenTeam, double totalAmount, double amountOnTeamA, double amountOnTeamB)
+    private UserBet CreateUserBet(Domain.Entities.Team chosenTeam, double totalAmount, double amountOnTeamA, double amountOnTeamB, Domain.Entities.Bet bet)
     {
-        var userBet = new UserBet(chosenTeam);
+        var userBet = new UserBet(chosenTeam, bet);
 
-        userBet.CalculateOdd(totalAmount, amountOnTeamA, amountOnTeamB);
+        userBet.CalculateOddOnRequest(totalAmount, amountOnTeamA, amountOnTeamB);
         return userBet;
     }
 
     private (double totalAmount, double amountOnTeamA, double amountOnTeamB) CalculateAmounts(List<UserBet> userBets)
     {
         var totalAmount = userBets.Sum(ub => ub.BetAmount);
-        var amountOnTeamA = userBets.Where(ub => ub.ChosenTeam == ub.Bet.Home).Sum(ub => ub.BetAmount);
-        var amountOnTeamB = userBets.Where(ub => ub.ChosenTeam == ub.Bet.Visitor).Sum(ub => ub.BetAmount);
+        var amountOnTeamA = userBets.Where(ub => ub.ChosenTeamId == ub.Bet.HomeId).Sum(ub => ub.BetAmount);
+        var amountOnTeamB = userBets.Where(ub => ub.ChosenTeamId == ub.Bet.VisitorId).Sum(ub => ub.BetAmount);
         return (totalAmount, amountOnTeamA, amountOnTeamB);
     }
 }

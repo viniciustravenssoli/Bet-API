@@ -6,6 +6,12 @@ public class UserBet : BaseEntity
         ChosenTeam = chosenTeam;
     }
 
+    public UserBet(Team chosenTeam, Bet bet)
+    {
+        ChosenTeam = chosenTeam;
+        Bet = bet;
+    }
+
     public UserBet()
     {
         
@@ -21,7 +27,7 @@ public class UserBet : BaseEntity
     public Team ChosenTeam { get; set; }
 
 
-    public void CalculateOdd(double totalAmount, double amountOnTeamA, double amountOnTeamB)
+    public void CalculateOddOnRequest(double totalAmount, double amountOnTeamA, double amountOnTeamB)
     {
         // Verifica se o totalAmount é zero para definir uma odd padrão
         if (totalAmount == 0 || amountOnTeamA == 0 || amountOnTeamB == 0)
@@ -31,20 +37,30 @@ public class UserBet : BaseEntity
             return;
         }
 
-        // Calcula as proporções
         double proportionA = amountOnTeamA / totalAmount;
         double proportionB = amountOnTeamB / totalAmount;
 
         // Calcula a odd com base na proporção da equipe escolhida
-        Odd = ChosenTeam == Bet.Visitor ? 1 / proportionA : 1 / proportionB;
+        Odd = ChosenTeam.Id == Bet.HomeId ? 1 / proportionA : 1 / proportionB;
+        Odd = Math.Round(Odd, 1);
+    }
+
+    public void CalculateOddOnCreate(double totalAmount, double amountOnTeamA, double amountOnTeamB)
+    {
+        // Verifica se o totalAmount é zero para definir uma odd padrão
+        if (totalAmount == 0 || amountOnTeamA == 0 || amountOnTeamB == 0)
+        {
+            // Definir odd padrão
+            Odd = 1.1; // Ou qualquer outro valor que você desejar
+            return;
+        }
+
+        double proportionA = amountOnTeamA / totalAmount;
+        double proportionB = amountOnTeamB / totalAmount;
+
+        // Calcula a odd com base na proporção da equipe escolhida
+        Odd = ChosenTeamId == Bet.HomeId ? 1 / proportionA : 1 / proportionB;
         Odd = Math.Round(Odd, 1);
     }
 }
 
-
-
-//public enum Team
-//{
-//    TeamA = 0,
-//    TeamB = 1
-//}

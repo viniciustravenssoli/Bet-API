@@ -5,5 +5,5 @@ public class ResponseJoinBet
 {
     public double Value { get; set; }
     public double PossibleReturn { get; set; }
-    public Team Chose { get; set; }
+    public long Chose { get; set; }
 }

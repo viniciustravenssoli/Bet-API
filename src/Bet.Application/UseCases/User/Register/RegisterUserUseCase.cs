@@ -35,7 +35,7 @@ public class RegisterUserUseCase : IRegisterUserUseCase
             Email = request.Email,
             Password = request.Password,
             Phone = request.Phone,
-            Role = "Admin",
+            Role = "Basic",
             Balance = 1000,
             MaxDailyBets = request.MaxDailyBets
             

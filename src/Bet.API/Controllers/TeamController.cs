@@ -1,6 +1,5 @@
 ﻿using Bet.Application.UseCases.Team.RegisterTeam;
 using Bet.Application.UseCases.Team.Update;
-using Bet.Application.UseCases.User.ChangeUserData;
 using Bet.Communication.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
