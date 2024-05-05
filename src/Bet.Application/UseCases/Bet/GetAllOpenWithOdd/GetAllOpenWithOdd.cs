@@ -3,66 +3,65 @@ using Bet.Domain.Entities;
 using Bet.Domain.Repository.Bet;
 using Bet.Domain.Repository.Team;
 
-namespace Bet.Application.UseCases.Bet.GetAllOpenWithOdd;
-public class GetAllOpenWithOdd : IGetAllOpenWithOdd
+namespace Bet.Application.UseCases.Bet.GetAllOpenWithOdd
 {
-    private readonly IBetReadOnlyRepository _betReadOnlyRepository;
-    private readonly ITeamRepository _teamRepository;
-
-    public GetAllOpenWithOdd(IBetReadOnlyRepository betReadOnlyRepository, ITeamRepository teamRepository)
+    public class GetAllOpenWithOdd : IGetAllOpenWithOdd
     {
-        _betReadOnlyRepository = betReadOnlyRepository;
-        _teamRepository = teamRepository;
-    }
+        private readonly IBetReadOnlyRepository _betReadOnlyRepository;
+        private readonly ITeamRepository _teamRepository;
 
-    public async Task<ResponseBetInfo> Execute(int page, int pageSize)
-    {
-        var unpaidBets = await _betReadOnlyRepository.GetUnpaidBetsWithUserBets(page, pageSize);
-
-        var betInfos = unpaidBets.Select(async bet =>
+        public GetAllOpenWithOdd(IBetReadOnlyRepository betReadOnlyRepository, ITeamRepository teamRepository)
         {
-            var userBets = bet.UserBets.ToList();
-            var (totalAmount, amountOnTeamA, amountOnTeamB) = CalculateAmounts(userBets);
+            _betReadOnlyRepository = betReadOnlyRepository;
+            _teamRepository = teamRepository;
+        }
 
-            var teamA = await _teamRepository.GetByIdAsync(bet.HomeId);
-            var teamB = await _teamRepository.GetByIdAsync(bet.VisitorId);
+        public async Task<ResponseBetInfo> Execute(int page, int pageSize)
+        {
+            var unpaidBets = await _betReadOnlyRepository.GetUnpaidBetsWithUserBets(page, pageSize);
 
-            var userBetOnA = CreateUserBet(teamA, totalAmount, amountOnTeamA, amountOnTeamB, bet);
-            var userBetOnB = CreateUserBet(teamB, totalAmount, amountOnTeamA, amountOnTeamB, bet);
-
-            return new BetInfo
+            var betInfoTasks = unpaidBets.Select(async bet =>
             {
-                BetId = bet.Id,
-                TeamAOdd = userBetOnA.Odd,
-                TeamBOdd = userBetOnB.Odd,
-                HomeTeamName = teamA.Name,
-                VisitorTeamName = teamB.Name,
+                var userBets = bet.UserBets.ToList();
+                var (totalAmount, amountOnTeamA, amountOnTeamB) = CalculateAmounts(userBets);
+
+                var teamA = await _teamRepository.GetByIdAsync(bet.HomeId);
+                var teamB = await _teamRepository.GetByIdAsync(bet.VisitorId);
+
+                var userBetOnA = CreateUserBet(teamA, totalAmount, amountOnTeamA, amountOnTeamB, bet);
+                var userBetOnB = CreateUserBet(teamB, totalAmount, amountOnTeamA, amountOnTeamB, bet);
+
+                return new BetInfo
+                {
+                    BetId = bet.Id,
+                    TeamAOdd = userBetOnA.Odd,
+                    TeamBOdd = userBetOnB.Odd,
+                    HomeTeamName = teamA.Name,
+                    VisitorTeamName = teamB.Name,
+                };
+            });
+
+            var betInfos = await Task.WhenAll(betInfoTasks);
+
+            return new ResponseBetInfo
+            {
+                betInfos = betInfos.ToList(),
             };
-        }).ToList();
+        }
 
-        var betInfosResults = await Task.WhenAll(betInfos);
-
-        var response = new ResponseBetInfo
+        private UserBet CreateUserBet(Domain.Entities.Team chosenTeam, double totalAmount, double amountOnTeamA, double amountOnTeamB, Domain.Entities.Bet bet)
         {
-            betInfos = betInfosResults.ToList(),
-        };
+            var userBet = new UserBet(chosenTeam, bet);
+            userBet.CalculateOddOnRequest(totalAmount, amountOnTeamA, amountOnTeamB);
+            return userBet;
+        }
 
-        return response;
-    }
-
-    private UserBet CreateUserBet(Domain.Entities.Team chosenTeam, double totalAmount, double amountOnTeamA, double amountOnTeamB, Domain.Entities.Bet bet)
-    {
-        var userBet = new UserBet(chosenTeam, bet);
-
-        userBet.CalculateOddOnRequest(totalAmount, amountOnTeamA, amountOnTeamB);
-        return userBet;
-    }
-
-    private (double totalAmount, double amountOnTeamA, double amountOnTeamB) CalculateAmounts(List<UserBet> userBets)
-    {
-        var totalAmount = userBets.Sum(ub => ub.BetAmount);
-        var amountOnTeamA = userBets.Where(ub => ub.ChosenTeamId == ub.Bet.HomeId).Sum(ub => ub.BetAmount);
-        var amountOnTeamB = userBets.Where(ub => ub.ChosenTeamId == ub.Bet.VisitorId).Sum(ub => ub.BetAmount);
-        return (totalAmount, amountOnTeamA, amountOnTeamB);
+        private (double totalAmount, double amountOnTeamA, double amountOnTeamB) CalculateAmounts(List<UserBet> userBets)
+        {
+            var totalAmount = userBets.Sum(ub => ub.BetAmount);
+            var amountOnTeamA = userBets.Where(ub => ub.ChosenTeamId == ub.Bet.HomeId).Sum(ub => ub.BetAmount);
+            var amountOnTeamB = userBets.Where(ub => ub.ChosenTeamId == ub.Bet.VisitorId).Sum(ub => ub.BetAmount);
+            return (totalAmount, amountOnTeamA, amountOnTeamB);
+        }
     }
 }

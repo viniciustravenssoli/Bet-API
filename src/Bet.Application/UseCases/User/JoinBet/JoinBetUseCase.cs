@@ -95,7 +95,7 @@ namespace Bet.Application.UseCases.User.JoinBet
             if (team == null || (team.Id != bet.HomeId && team.Id != bet.VisitorId))
                 throw new ConflictException("Time informado não pertence a essa aposta");
 
-            if (user.MaxDailyBets <= betsMadeToday)
+            if (user.MaxDailyBets <= betsMadeToday && user.Role != "Admin")
                 throw new ConflictException("Você atingiu seu limite diário de apostas");
 
             if (validationErrors.Any())
