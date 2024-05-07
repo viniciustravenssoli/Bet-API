@@ -58,3 +58,9 @@ Para adicionar e atualizar o banco de dados usando Entity Framework Core (EF Cor
 
 
 3. O parâmetro --verbose é opcional, mas pode ser útil para ver informações detalhadas sobre o processo de migração e atualização do banco de dados.
+
+TODO//
+
+Refact na forma em que é realizado o pagamento, atualmente pego todas userbets do banco e o valor em cada time para calcular a odd, isso não escala a partir do momento que tenha muitas userbets, talvez criar propriedades valueOnHomeTeam e valueOnVisitorTeam
+na classe de bet e toda vez que algum usuario entrar numa aposta pegar o valor que ele colocou e incrementar essas propriedades baseado na escolha do time dele.
+
